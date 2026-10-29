@@ -1,0 +1,42 @@
+{
+  "name": "wardayaguard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "WardayaGuard: regression test suite for the Wardaya Store e-commerce stack",
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "dev:api": "npm run dev -w @wardaya/api",
+    "start:api": "npm run start -w @wardaya/api",
+    "seed": "npm run seed -w @wardaya/api",
+    "test": "npm run test:unit && npm run test:api",
+    "test:unit": "vitest run",
+    "test:api": "playwright test --project=api",
+    "test:all": "playwright test",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5"
+  },
+  "allowScripts": {
+    "better-sqlite3@13.0.3": true,
+    "esbuild@0.28.2": true
+  }
+}
