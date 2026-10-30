@@ -41,10 +41,11 @@ inclusive, as written in `docs/business-rules.md`.
 
 ## Evidence
 
-- Failing CI run: recorded on the pull request for this branch.
+- Failing CI run: [40999666482](https://github.com/fawwazmw/wardayaguard/actions/runs/40999666482)
 - Failing assertion: expected `0`, received `599` in
   `pricing specification > shipping > is free exactly at the threshold`.
-- This is the first step of the workflow that fails; no new test was added.
+- CI stopped at the unit step. The UI and API projects never ran, which is the
+  intended fast failure for a pure pricing regression.
 
 ## Test or product
 

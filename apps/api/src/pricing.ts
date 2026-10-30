@@ -55,7 +55,7 @@ export function shippingFor(amountAfterDiscountCents: number): number {
   if (!Number.isInteger(amountAfterDiscountCents) || amountAfterDiscountCents < 0) {
     throw new RangeError('amountAfterDiscountCents must be a non-negative integer');
   }
-  return amountAfterDiscountCents > FREE_SHIPPING_THRESHOLD_CENTS ? 0 : FLAT_SHIPPING_FEE_CENTS;
+  return amountAfterDiscountCents >= FREE_SHIPPING_THRESHOLD_CENTS ? 0 : FLAT_SHIPPING_FEE_CENTS;
 }
 
 export function totalsFor(lines: readonly PricingLine[], percentOff = 0): OrderTotals {
