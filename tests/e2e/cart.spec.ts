@@ -56,6 +56,24 @@ test.describe('cart', () => {
     await cartPage.expectLine('Archive Jacket', '$159.00');
   });
 
+  test('CART-007 the header count reflects total quantity, not line count', async ({
+    signInAs,
+    shop,
+    header,
+    cartPage,
+  }) => {
+    await signInAs(TEST_USERS.standard);
+    await shop.open();
+    await shop.addToCart('Lumen Tee');
+    await header.expectCartCount(1);
+
+    await header.openCart();
+    await cartPage.setQuantity('Lumen Tee', 3);
+
+    await cartPage.expectLine('Lumen Tee', '$87.00');
+    await header.expectCartCount(3);
+  });
+
   test('REG-002 the cart survives a page reload', async ({
     signInAs,
     shop,
