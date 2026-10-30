@@ -176,11 +176,11 @@ ordersRouter.post('/checkout', (request, response) => {
   const body = checkoutSchema.parse(request.body);
 
   const replay = db
-    .prepare('SELECT id, user_id FROM orders WHERE idempotency_key = ?')
-    .get(idempotencyKey) as { id: number; user_id: number } | undefined;
+    .prepare('SELECT id FROM orders WHERE user_id = ? AND idempotency_key = ?')
+    .get(user.id, idempotencyKey) as { id: number } | undefined;
 
   if (replay) {
-    const existing = findOrder(replay.user_id, replay.id);
+    const existing = findOrder(user.id, replay.id);
     response.status(200).json({ ...existing, replayed: true });
     return;
   }

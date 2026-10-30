@@ -43,7 +43,7 @@ customer's order id, items and shipping address.
 
 ## Evidence
 
-- Failing CI run: recorded on the pull request for this branch.
+- Failing CI run: [40998891243](https://github.com/fawwazmw/wardayaguard/actions/runs/40998891243)
 - Failing assertion: expected `201`, received `200`.
 - Trace and report: uploaded as the `playwright-report` artifact.
 
