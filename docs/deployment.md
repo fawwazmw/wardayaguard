@@ -19,6 +19,20 @@ Why a separate workflow instead of a step in CI: a newer commit must not cancel
 a Pages deployment mid-flight. The report job has its own `pages` concurrency
 group with `cancel-in-progress: false`.
 
+### Transient Pages failures
+
+GitHub Pages occasionally returns a 500 when creating a deployment. The workflow
+removes any stale `github-pages` artifact from an earlier attempt before
+uploading, so re-running the failed job is safe:
+
+```bash
+gh run rerun <run-id> --failed
+```
+
+Without that cleanup, a rerun uploads a second artifact with the same name and
+`deploy-pages` refuses to choose between them. That happened once, on attempt 2
+of run 41071438847; attempt 3 succeeded after the duplicates were removed.
+
 ## 2. Full demo as one service
 
 When `apps/storefront/dist` exists, the API serves the storefront and falls back

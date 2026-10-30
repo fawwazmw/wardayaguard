@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  actions: read
+  actions: write
   contents: read
   pages: write
   id-token: write
@@ -27,6 +27,23 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      # A rerun re-executes the job, including the Pages artifact upload. If an
+      # artifact from an earlier attempt still exists, deploy-pages fails with
+      # "Multiple artifacts named github-pages". Remove it first so a rerun is
+      # always safe.
+      - name: Remove stale Pages artifacts from earlier attempts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
+            --jq '.artifacts[] | select(.name == "github-pages") | .id' |
+          while read -r artifact_id; do
+            if [ -n "$artifact_id" ]; then
+              echo "Deleting stale github-pages artifact ${artifact_id}"
+              gh api -X DELETE "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}"
+            fi
+          done
+
       - name: Download report artifact from the CI run
         uses: actions/download-artifact@v8
         with:
