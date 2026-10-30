@@ -90,6 +90,24 @@ test.describe('cart', () => {
     expect(response.body.error.details).toMatchObject({ available: 4, requested: 5 });
   });
 
+  test('CART-006 a merged add cannot push the line above stock', async ({ standard }) => {
+    // Archive Jacket has stock 2 in the seed.
+    const first = await standard.post<CartBody>('/api/cart/items', { productId: 6, quantity: 2 });
+    expect(first.status).toBe(201);
+
+    const second = await standard.post<ErrorBody>('/api/cart/items', {
+      productId: 6,
+      quantity: 1,
+    });
+
+    expect(second.status).toBe(409);
+    expect(second.body.error.code).toBe('OUT_OF_STOCK');
+    expect(second.body.error.details).toMatchObject({ available: 2, requested: 3 });
+
+    const cart = await standard.get<CartBody>('/api/cart');
+    expect(cart.body.items[0]?.quantity).toBe(2);
+  });
+
   test('PROD-004 an unavailable product cannot be added to the cart', async ({ standard }) => {
     const response = await standard.post<ErrorBody>('/api/cart/items', {
       productId: 8,
