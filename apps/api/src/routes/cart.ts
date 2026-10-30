@@ -73,7 +73,7 @@ cartRouter.post('/items', (request, response) => {
     .get(user.id, product.id) as { id: number; quantity: number } | undefined;
 
   const requested = (existing?.quantity ?? 0) + body.quantity;
-  if (requested > product.stock) {
+  if (!existing && body.quantity > product.stock) {
     throw new ApiError(
       409,
       'OUT_OF_STOCK',
