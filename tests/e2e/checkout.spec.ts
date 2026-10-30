@@ -105,6 +105,37 @@ test.describe('checkout', () => {
     await orderDetail.expectShipping('Free');
   });
 
+  test('REG-003 checkout recovers when a dependency fails', async ({
+    signInAs,
+    shop,
+    header,
+    cartPage,
+    checkoutPage,
+    orderDetail,
+    page,
+    request,
+  }) => {
+    await signInAs(TEST_USERS.standard);
+    await shop.open();
+    await shop.addToCart('Aurora Hoodie');
+    await header.openCart();
+    await cartPage.checkout();
+    await checkoutPage.fill(SHIPPING);
+
+    const armed = await request.post('/api/test/fail-next-checkout');
+    expect(armed.status()).toBe(204);
+
+    await checkoutPage.placeOrder();
+    await checkoutPage.expectError('Checkout is temporarily unavailable');
+    await expect(page).toHaveURL('/checkout');
+    await expect(page.getByText('Aurora Hoodie x 1')).toBeVisible();
+
+    // The cart survived the failure, so the same form can be retried.
+    await checkoutPage.placeOrder();
+    await orderDetail.expectConfirmed();
+    await orderDetail.expectTotal('$89.00');
+  });
+
   test('an expired discount code is reported and no order is created', async ({
     signInAs,
     shop,

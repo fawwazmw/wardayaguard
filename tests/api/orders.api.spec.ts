@@ -243,4 +243,29 @@ test.describe('checkout and orders', () => {
     expect(first.body.items[0]?.productId).toBe(TEST_PRODUCTS.socks.id);
     expect(second.body.items[0]?.productId).toBe(TEST_PRODUCTS.tee.id);
   });
+
+  test('REG-003 a failed checkout keeps the cart and can be retried', async ({
+    standard,
+    request,
+  }) => {
+    await addToCart(standard, TEST_PRODUCTS.socks.id, 1);
+    const key = newIdempotencyKey('dependency');
+
+    const armed = await request.post('/api/test/fail-next-checkout');
+    expect(armed.status()).toBe(204);
+
+    const failed = await checkout(standard, SHIPPING, key);
+    expect(failed.status).toBe(503);
+    expect((failed.body as unknown as ErrorBody).error.code).toBe('DEPENDENCY_UNAVAILABLE');
+
+    const cart = await standard.get<CartBody>('/api/cart');
+    expect(cart.body.items).toHaveLength(1);
+    expect(cart.body.items[0]?.quantity).toBe(1);
+
+    const retry = await checkout(standard, SHIPPING, key);
+    expect(retry.status).toBe(201);
+
+    const history = await standard.get<OrderListBody>('/api/orders');
+    expect(history.body.count).toBe(1);
+  });
 });
