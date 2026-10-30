@@ -6,6 +6,7 @@ TypeScript, Playwright, Vitest, React, Express, SQLite, GitHub Actions.
 [![CI](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml) [![Nightly browsers](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml)
 
 **Live test report:** https://fawwazmw.github.io/wardayaguard/
+**Live demo:** https://wardayaguard.onrender.com
 **Release checklist:** [docs/release-checklist.md](docs/release-checklist.md)
 
 Wardaya Store is the system under test. WardayaGuard is the harness that proves
@@ -269,9 +270,8 @@ DOM showed, and the five steps to the wrong aggregate.
   stock update, not distributed locking.
 - API and UI suites share one database and one worker.
 - No tax, payment provider, carrier integration, rate limiting or lockout.
-- The report is published. The demo is a one-click Render blueprint and is not
-  hosted yet. Free hosting has an ephemeral disk, so its SQLite data resets on
-  restart.
+- The demo runs on Render's free plan: SQLite is ephemeral and resets on
+  restart, and a sleeping instance takes about 30 seconds to wake.
 
 ## Roadmap
 
@@ -287,7 +287,7 @@ DOM showed, and the five steps to the wrong aggregate.
 - [x] Chromium, Firefox and WebKit nightly matrix
 - [x] axe-core WCAG A and AA scans on every customer page
 - [x] Flake rate published from a repeat run
-- [ ] Hosted demo from the Render blueprint
+- [x] Hosted demo on Render
 - [x] One deep failure investigation write-up with a trace
 
 ## Repository layout

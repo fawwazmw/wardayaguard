@@ -42,9 +42,8 @@ Do not open traces here: the report is green, so there are none.
 Open the repository. Point at the badges, the test table and the release
 checklist.
 
-Say: "Eleven of twelve release checks pass. The twelfth is the hosted demo, and
-I left it partial because it needs my own hosting account, not because the code
-is missing."
+Say: "All twelve release checks pass. The demo is live at
+wardayaguard.onrender.com, and this report is the Chromium run."
 
 That sentence does more than a perfect checklist, because it shows you audit your
 own claims.

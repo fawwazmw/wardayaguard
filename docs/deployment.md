@@ -1,7 +1,6 @@
 # Deployment
 
-Two public artifacts. The report is live. The demo is a one-command container
-or a Render blueprint, but is not hosted from this repository yet.
+Two public artifacts, both live.
 
 ## 1. Playwright report (live)
 
@@ -33,7 +32,22 @@ Without that cleanup, a rerun uploads a second artifact with the same name and
 `deploy-pages` refuses to choose between them. That happened once, on attempt 2
 of run 41071438847; attempt 3 succeeded after the duplicates were removed.
 
-## 2. Full demo as one service
+## 2. Full demo (live)
+
+- **URL:** https://wardayaguard.onrender.com
+- **Host:** Render free plan, Docker, single web service.
+- **Health check:** `/api/health`.
+
+Verified on 2026-10-30:
+
+| Check             | Result                                          |
+| ----------------- | ----------------------------------------------- |
+| `/api/health`     | 200                                             |
+| Storefront        | 200, root element present                       |
+| Catalogue         | 8 seeded products                               |
+| Login             | `standard@wardaya.test` works                   |
+| `/api/test/reset` | 404, test routes disabled                       |
+| Browser smoke     | 8 cards, search filters to 1, no console errors |
 
 When `apps/storefront/dist` exists, the API serves the storefront and falls back
 to `index.html` for client-side routes. One container exposes the UI and `/api`
