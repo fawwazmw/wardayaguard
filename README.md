@@ -5,6 +5,8 @@ TypeScript, Playwright, Vitest, React, Express, SQLite, GitHub Actions.
 
 [![CI](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml)
 
+**Live test report:** https://fawwazmw.github.io/wardayaguard/
+
 Wardaya Store is the system under test. WardayaGuard is the harness that proves
 its pricing, inventory, checkout, authorization and customer-journey rules hold.
 
@@ -192,6 +194,15 @@ evidence to [docs/evidence/clickthrough-2026-10-30.json](docs/evidence/clickthro
 6. Run the API and UI projects in one Playwright run.
 7. Upload the HTML report and traces as a workflow artifact.
 
+A separate `Report` workflow runs after CI succeeds on `main`, downloads that
+artifact and deploys it to GitHub Pages. The public report is
+https://fawwazmw.github.io/wardayaguard/. Deployment uses its own concurrency
+group so a newer commit cannot cancel a deploy mid-flight.
+
+A third job builds the production Docker image and smoke-tests it: start the
+container, wait for `/api/health`, fetch `/`, then remove it. That keeps the
+deployment artifact honest.
+
 The badge above reflects the latest run on `main`. The first run is
 [40992908642](https://github.com/fawwazmw/wardayaguard/actions/runs/40992908642).
 
@@ -223,7 +234,9 @@ caught it without new coverage. Full log and reasoning:
 - No automated accessibility scan (axe-core) yet. Keyboard focus and contrast
   are covered by the UI test and the audit above.
 - No tax, payment provider, carrier integration, rate limiting or lockout.
-- No deployed demo or published report yet.
+- The report is published. The demo is a one-click Render blueprint and is not
+  hosted yet. Free hosting has an ephemeral disk, so its SQLite data resets on
+  restart.
 
 ## Roadmap
 
@@ -234,9 +247,11 @@ caught it without new coverage. Full log and reasoning:
 - [x] UI critical journeys, page objects, mobile and keyboard checks
 - [x] CI workflow with HTML report artifact
 - [x] Defect lifecycle: introduce, detect, report, fix, regression
+- [x] HTML report published to GitHub Pages
+- [x] Dockerfile and Render blueprint for a single-service demo
 - [ ] Checkout accessibility scan with axe-core
 - [ ] Firefox and WebKit nightly matrix
-- [ ] Deployed demo and published HTML report
+- [ ] Hosted demo from the Render blueprint
 - [ ] Flake rate published from a repeat run
 - [ ] One deep failure investigation write-up with a trace
 
@@ -245,6 +260,8 @@ caught it without new coverage. Full log and reasoning:
 ```
 apps/api/              Express API, schema, seed, pricing, routes
 apps/storefront/       React and Vite storefront
+Dockerfile             Single-service image: API plus built storefront
+render.yaml            Render blueprint for the hosted demo
 tests/
   api/                 Playwright API specs
   e2e/                 Playwright UI journeys
@@ -265,6 +282,7 @@ screenshots/           Real captures from the click-through audit
 | [docs/business-rules.md](docs/business-rules.md)                   | The specification under test                     |
 | [docs/defects/defect-template.md](docs/defects/defect-template.md) | Defect report format                             |
 | [docs/defects/README.md](docs/defects/README.md)                   | Defect log with red and green run links          |
+| [docs/deployment.md](docs/deployment.md)                           | Live report, Docker image and Render blueprint   |
 | [docs/test-summary-template.md](docs/test-summary-template.md)     | Run summary format                               |
 | [DESIGN.md](DESIGN.md)                                             | Storefront direction and accessibility decisions |
 

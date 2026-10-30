@@ -53,3 +53,35 @@ jobs:
             test-results/
           retention-days: 7
           if-no-files-found: ignore
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build image
+        run: docker build -t wardayaguard:ci .
+
+      - name: Smoke test the container
+        run: |
+          docker run -d --name wardayaguard -p 4000:4000 -e ALLOW_TEST_ROUTES=0 wardayaguard:ci
+
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4000/api/health > /dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          echo "health:"
+          curl -fsS http://127.0.0.1:4000/api/health
+          echo
+          echo "storefront:"
+          curl -fsS http://127.0.0.1:4000/ | grep -q '<div id="root"></div>'
+          echo "index served"
+
+          docker logs wardayaguard
+          docker rm -f wardayaguard

@@ -1,0 +1,21 @@
+# Render blueprint for the public demo.
+#
+# The API serves the built storefront on the same origin (see apps/api/src/app.ts),
+# so a single web service is enough. SQLite lives on the ephemeral container
+# disk: it is seeded on boot and resets on restart. That is acceptable for a
+# demo and is documented in docs/deployment.md.
+
+services:
+  - type: web
+    name: wardayaguard
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOW_TEST_ROUTES
+        value: '0'
+      - key: DATABASE_PATH
+        value: .data/wardaya.sqlite
