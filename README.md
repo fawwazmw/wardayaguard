@@ -6,6 +6,7 @@ TypeScript, Playwright, Vitest, React, Express, SQLite, GitHub Actions.
 [![CI](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml) [![Nightly browsers](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml)
 
 **Live test report:** https://fawwazmw.github.io/wardayaguard/
+**Release checklist:** [docs/release-checklist.md](docs/release-checklist.md)
 
 Wardaya Store is the system under test. WardayaGuard is the harness that proves
 its pricing, inventory, checkout, authorization and customer-journey rules hold.
@@ -315,6 +316,7 @@ screenshots/           Real captures from the click-through audit
 | [docs/defects/README.md](docs/defects/README.md)                                                     | Defect log with red and green run links          |
 | [docs/investigations/WARD-INV-001-header-count.md](docs/investigations/WARD-INV-001-header-count.md) | Trace walkthrough for WARD-DEF-004               |
 | [docs/deployment.md](docs/deployment.md)                                                             | Live report, Docker image and Render blueprint   |
+| [docs/release-checklist.md](docs/release-checklist.md)                                               | Verified release checklist and honest gaps       |
 | [docs/test-summary-template.md](docs/test-summary-template.md)                                       | Run summary format                               |
 | [DESIGN.md](DESIGN.md)                                                                               | Storefront direction and accessibility decisions |
 
