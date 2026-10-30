@@ -220,4 +220,27 @@ test.describe('checkout and orders', () => {
     expect(product.body.stock).toBe(0);
     expect(standardHistory.body.count + rivalHistory.body.count).toBe(1);
   });
+
+  test('API-006 two customers reusing one idempotency key get separate orders', async ({
+    standard,
+    rival,
+  }) => {
+    await addToCart(standard, TEST_PRODUCTS.socks.id, 1);
+    await addToCart(rival, TEST_PRODUCTS.tee.id, 1);
+
+    // The unique constraint is per user, so the same key value is legal for
+    // two different customers and must never resolve to the other's order.
+    const sharedKey = newIdempotencyKey('shared');
+
+    const [first, second] = await Promise.all([
+      checkout(standard, SHIPPING, sharedKey),
+      checkout(rival, SHIPPING, sharedKey),
+    ]);
+
+    expect(first.status).toBe(201);
+    expect(second.status).toBe(201);
+    expect(first.body.id).not.toBe(second.body.id);
+    expect(first.body.items[0]?.productId).toBe(TEST_PRODUCTS.socks.id);
+    expect(second.body.items[0]?.productId).toBe(TEST_PRODUCTS.tee.id);
+  });
 });
