@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { armCheckoutFailure, resetFaults } from './faults';
 import { resetDatabase } from './seed';
 
 /**
@@ -8,8 +9,18 @@ import { resetDatabase } from './seed';
 export const testRoutes = Router();
 
 testRoutes.post('/reset', (_request, response) => {
+  resetFaults();
   resetDatabase();
   response.json({ ok: true });
+});
+
+/**
+ * Arms a one-shot checkout failure. The next checkout returns 503 before any
+ * order work, which lets the suite verify cart preservation and recovery.
+ */
+testRoutes.post('/fail-next-checkout', (_request, response) => {
+  armCheckoutFailure();
+  response.status(204).end();
 });
 
 /**

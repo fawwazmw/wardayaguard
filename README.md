@@ -19,16 +19,16 @@ its pricing, inventory, checkout, authorization and customer-journey rules hold.
 | Suite                                  | Tests  | Status      |
 | -------------------------------------- | ------ | ----------- |
 | Unit (pricing rules)                   | 13     | Passing     |
-| API (contract, authz, checkout, stock) | 52     | Passing     |
-| UI (customer journeys, Chromium)       | 27     | Passing     |
-| **Total**                              | **92** | **Passing** |
+| API (contract, authz, checkout, stock) | 53     | Passing     |
+| UI (customer journeys, Chromium)       | 28     | Passing     |
+| **Total**                              | **94** | **Passing** |
 
 Latest run: Node 24.18.0, macOS, Chromium 156, seed reset before every test.
-Playwright: 79 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean.
+Playwright: 81 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean.
 
 CI runs the API suite and the Chromium UI suite on every push and pull request.
-The nightly matrix runs the same 27 UI cases on Chromium, Firefox and WebKit,
-one job per browser, 81 UI executions per night:
+The nightly matrix runs the same 28 UI cases on Chromium, Firefox and WebKit,
+one job per browser, 84 UI executions per night:
 [nightly workflow](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml).
 
 ## Screenshots
@@ -59,6 +59,9 @@ one job per browser, 81 UI executions per night:
 - **Accessibility is measured.** axe-core scans the catalogue, empty search,
   login, cart, checkout, confirmation and order history against WCAG A and AA
   on every browser. A violation fails the suite.
+- **Failure recovery.** A one-shot dependency switch makes checkout return 503.
+  The test proves the cart survives, the retry succeeds, and only one order is
+  created.
 - **Deterministic data.** Every test starts from a reset seed, so execution
   order cannot change a result.
 - **Catalogue contract.** Eight products are asserted against a fixture that is
@@ -147,8 +150,8 @@ To measure flakiness rather than guess:
 npm run test:flake
 ```
 
-Latest measurement: 237 executions (79 tests repeated three times), 237 passed,
-0 flaky, 1.0m. Details in
+Latest measurement: 243 executions (81 tests repeated three times), 243 passed,
+0 flaky, 1.3m. Details in
 [docs/evidence/flake-2026-10-30.md](docs/evidence/flake-2026-10-30.md).
 
 ## Seeded data
@@ -197,7 +200,7 @@ evidence to [docs/evidence/clickthrough-2026-10-30.json](docs/evidence/clickthro
 - horizontal overflow at 390px on shop, cart and checkout: 0
 - empty states for cart, orders and search: present
 - every flow clicked once: sign in, add, quantity update, checkout, sign out
-- flake rate: 0 out of 237 executions (79 tests repeated three times)
+- flake rate: 0 out of 243 executions (81 tests repeated three times)
 
 Accessibility is also asserted in the suite itself: axe-core reports 0 WCAG A/AA
 violations across seven page states (catalogue, empty search, login, cart,

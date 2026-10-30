@@ -5,7 +5,7 @@ and the questions this project is built to survive.
 
 ## One-liner
 
-WardayaGuard is a regression suite for a seeded e-commerce stack: 92 tests
+WardayaGuard is a regression suite for a seeded e-commerce stack: 94 tests
 across API, UI and pricing, four documented defect lifecycles, and a public
 Playwright report.
 
@@ -13,12 +13,12 @@ Playwright report.
 
 Use these as written; every number is measured and linked.
 
-- Automated 92 tests (52 API, 27 UI, 13 unit) for a React, Express and SQLite
+- Automated 94 tests (53 API, 28 UI, 13 unit) for a React, Express and SQLite
   e-commerce stack with Playwright, Vitest and TypeScript.
 - Found and closed four defects through an introduce, detect, report, fix and
   regression loop, including a Critical cross-customer idempotency leak.
 - Kept pull-request CI on the API and Chromium suites, moved Firefox and WebKit
-  to a nightly matrix, and measured 0 flakes across 237 repeated executions.
+  to a nightly matrix, and measured 0 flakes across 243 repeated executions.
 - Published a public Playwright report, a Docker image built and smoke-tested in
   CI, and an axe-core WCAG A/AA scan with zero violations.
 
@@ -31,7 +31,7 @@ compare against, and the honest numbers are stronger.
 
 Open https://fawwazmw.github.io/wardayaguard/.
 
-Say: "This is the latest report from the Chromium and API run. The suite is 79
+Say: "This is the latest report from the Chromium and API run. The suite is 81
 Playwright tests plus 13 unit tests. The nightly matrix runs the same UI tests on
 Firefox and WebKit."
 
@@ -83,8 +83,8 @@ separates them."
 
 ### 2:40 to 3:00, close
 
-Say: "What I would do next is host the Render blueprint, add a dependency-failure
-test for checkout, and keep the nightly matrix running. The flake number covers
+Say: "What I would do next is host the Render blueprint, add per-worker
+databases, and keep the nightly matrix running. The flake number covers
 one worker and one machine, so I would not claim more than that."
 
 ## Questions to expect
@@ -108,7 +108,7 @@ documented decision, not a shortcut.
 
 **Why only one worker?**
 The reset endpoint is global and SQLite writes are serialized. Per-worker
-databases are the next step. The suite is 92 tests and runs in about 20 seconds,
+databases are the next step. The suite is 94 tests and runs in about 20 seconds,
 so the constraint is acceptable for now.
 
 **How did you find the idempotency bug?**
@@ -121,11 +121,9 @@ quantity 3 and the page rendered it. The only wrong value was a derived badge,
 which narrowed the search to one aggregate in one component.
 
 **What is not covered?**
-Checkout recovery when a dependency fails, real payments, tax, rate limiting, and
-durable data on the hosted demo. The checklist lists these instead of implying
-full coverage.
+Real payments, tax, rate limiting, and durable data on the hosted demo. The
+checklist lists these instead of implying full coverage.
 
 **What would you test next?**
-A fault switch for checkout dependency failure, per-worker databases, and a
-second API instance against one database to test real concurrency instead of
-single-process serialization.
+Per-worker databases, and a second API instance against one database to test
+real concurrency instead of single-process serialization.

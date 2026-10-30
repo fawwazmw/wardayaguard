@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { currentUser, requireAuth } from '../auth';
 import { db, type CartLineRow, type OrderItemRow, type OrderRow } from '../db';
 import { ApiError } from '../errors';
+import { consumeCheckoutFailure } from '../faults';
 import { totalsFor } from '../pricing';
 
 export const ordersRouter = Router();
@@ -174,6 +175,12 @@ ordersRouter.post('/checkout', (request, response) => {
   const user = currentUser(request);
   const idempotencyKey = idempotencyKeySchema.parse((request.get('idempotency-key') ?? '').trim());
   const body = checkoutSchema.parse(request.body);
+
+  // Test-only switch. Simulates a downstream dependency failing before any
+  // order work, so the cart must survive and a retry must succeed.
+  if (consumeCheckoutFailure()) {
+    throw new ApiError(503, 'DEPENDENCY_UNAVAILABLE', 'Checkout is temporarily unavailable');
+  }
 
   const replay = db
     .prepare('SELECT id FROM orders WHERE user_id = ? AND idempotency_key = ?')

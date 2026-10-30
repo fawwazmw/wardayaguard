@@ -2,7 +2,7 @@
 
 Traceability between the designed cases and the automation that proves them.
 `Automated` means a test exists in this repository and passed on the last run
-(2026-10-30: 13 unit, 52 API, 27 UI). `Planned` means designed but not
+(2026-10-30: 13 unit, 53 API, 28 UI). `Planned` means designed but not
 implemented yet.
 
 IDs are area prefixed because the area already namespaces them. Defects use
@@ -85,7 +85,8 @@ IDs are area prefixed because the area already namespaces them. Defects use
 | ------- | ------------------------------------------------------------- | -------- | ----- | --------- | ------------------------------ |
 | REG-001 | Full journey from login to order confirmation to history      | P1       | UI    | Automated | `tests/e2e/regression.spec.ts` |
 | REG-002 | Cart persistence after refresh follows documented behaviour   | P2       | UI    | Automated | `tests/e2e/cart.spec.ts`       |
-| REG-003 | Checkout recovers gracefully when a dependency is unavailable | P1       | UI    | Planned   | -                              |
+| REG-003 | A failed checkout keeps the cart and can be retried           | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
+| REG-003 | Checkout recovers when a dependency fails                     | P1       | UI    | Automated | `tests/e2e/checkout.spec.ts`   |
 | REG-004 | Core shopping journey works at mobile width                   | P2       | UI    | Automated | `tests/e2e/regression.spec.ts` |
 | REG-005 | Keyboard navigation and visible focus in checkout             | P2       | UI    | Automated | `tests/e2e/regression.spec.ts` |
 | REG-010 | Signed out visitors get a sign in path, not a dead add button | P2       | UI    | Automated | `tests/e2e/catalogue.spec.ts`  |
@@ -117,5 +118,7 @@ separate test ID, so a browser-specific failure appears against the same case.
 
 ## Not yet automated
 
-- REG-003, dependency failure during checkout. Needs a fault switch on the
-  storefront or a proxy that can fail a request.
+All designed cases are automated. The gaps that remain are environmental, not
+missing tests: the hosted demo, durable data on free hosting, and parallel
+workers. They are listed in
+[the release checklist](release-checklist.md).

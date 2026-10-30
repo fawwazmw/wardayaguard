@@ -28,6 +28,8 @@ controllable, not as the portfolio deliverable.
 - Stock validation and reserved-stock absence.
 - Pricing: subtotal, discount ordering, shipping threshold, totals.
 - Checkout validation, order creation, stock decrement, cart clearing.
+- Checkout recovery when a downstream dependency fails: cart preserved, retry
+  succeeds, exactly one order.
 - Idempotent checkout.
 - Authorization: cart and order ownership (IDOR).
 - Error envelope and information leakage.
@@ -94,6 +96,7 @@ only when `ALLOW_TEST_ROUTES=1`.
 | Reading another customer's order         | Critical, data breach            | API-002 IDOR test                                        |
 | Wrong total after discount               | High, revenue and disputes       | CHK-003 plus unit pricing suite                          |
 | Stock drift after a failed checkout      | High, silent inventory loss      | Transaction rollback in checkout, stock assertion        |
+| Checkout blocked by a failing dependency | High, lost orders                | REG-003 API and UI, cart preserved and retry succeeds    |
 | Password or account enumeration          | Medium                           | AUTH-002 identical responses                             |
 | Internal error leaking a stack trace     | Medium                           | API-005 fault injection                                  |
 | Unavailable product still purchasable    | Medium                           | PROD-004                                                 |
