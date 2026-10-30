@@ -2,7 +2,7 @@
 
 Traceability between the designed cases and the automation that proves them.
 `Automated` means a test exists in this repository and passed on the last run
-(2026-10-30: 13 unit, 50 API, 23 UI). `Planned` means designed but not
+(2026-10-30: 13 unit, 52 API, 23 UI). `Planned` means designed but not
 implemented yet.
 
 IDs are area prefixed because the area already namespaces them. Defects use

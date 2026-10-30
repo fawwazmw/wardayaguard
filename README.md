@@ -16,13 +16,12 @@ its pricing, inventory, checkout, authorization and customer-journey rules hold.
 | Suite                                  | Tests  | Status      |
 | -------------------------------------- | ------ | ----------- |
 | Unit (pricing rules)                   | 13     | Passing     |
-| API (contract, authz, checkout, stock) | 50     | Passing     |
+| API (contract, authz, checkout, stock) | 52     | Passing     |
 | UI (customer journeys, Chromium)       | 23     | Passing     |
-| **Total**                              | **86** | **Passing** |
+| **Total**                              | **88** | **Passing** |
 
 Latest run: Node 24.18.0, macOS, Chromium 156, seed reset before every test.
-Playwright: 73 tests in 28.9s. Vitest: 13 tests in 0.1s. Typecheck, ESLint and
-Prettier are clean.
+Playwright: 75 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean.
 
 ## Screenshots
 
@@ -196,6 +195,24 @@ evidence to [docs/evidence/clickthrough-2026-10-30.json](docs/evidence/clickthro
 The badge above reflects the latest run on `main`. The first run is
 [40992908642](https://github.com/fawwazmw/wardayaguard/actions/runs/40992908642).
 
+## Defect and fault-injection lifecycle
+
+Three defects were injected deliberately and driven through introduce, detect,
+report, fix and verify on separate branches and pull requests. The fault, the
+failing test, the report and the fix are separate commits, so both the red and
+the green runs are visible.
+
+| ID           | Defect                                     | Severity | Detection           | Red run                                                                  | PR                                                    |
+| ------------ | ------------------------------------------ | -------- | ------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------- |
+| WARD-DEF-001 | Idempotency key leaked across customers    | Critical | New test `API-006`  | [run](https://github.com/fawwazmw/wardayaguard/actions/runs/40998891243) | [#1](https://github.com/fawwazmw/wardayaguard/pull/1) |
+| WARD-DEF-002 | Cart merge bypassed the stock guard        | High     | New test `CART-006` | [run](https://github.com/fawwazmw/wardayaguard/actions/runs/40999309601) | [#2](https://github.com/fawwazmw/wardayaguard/pull/2) |
+| WARD-DEF-003 | Free shipping excluded the exact threshold | High     | Existing unit test  | [run](https://github.com/fawwazmw/wardayaguard/actions/runs/40999666482) | [#3](https://github.com/fawwazmw/wardayaguard/pull/3) |
+
+The first two were real coverage gaps, so detection required a new test. The
+third was already guarded by the 4999/5000/5001 boundary test, so the suite
+caught it without new coverage. Full log and reasoning:
+[docs/defects/README.md](docs/defects/README.md).
+
 ## Known limitations
 
 - Chromium only. Firefox and WebKit are pending, and when added they will run
@@ -206,7 +223,6 @@ The badge above reflects the latest run on `main`. The first run is
 - No automated accessibility scan (axe-core) yet. Keyboard focus and contrast
   are covered by the UI test and the audit above.
 - No tax, payment provider, carrier integration, rate limiting or lockout.
-- Fault injection and the defect lifecycle are planned, not built.
 - No deployed demo or published report yet.
 
 ## Roadmap
@@ -217,8 +233,8 @@ The badge above reflects the latest run on `main`. The first run is
 - [x] Storefront: login, catalogue, cart, checkout, confirmation, order history
 - [x] UI critical journeys, page objects, mobile and keyboard checks
 - [x] CI workflow with HTML report artifact
+- [x] Defect lifecycle: introduce, detect, report, fix, regression
 - [ ] Checkout accessibility scan with axe-core
-- [ ] Planted-defect lifecycle: introduce, detect, report, fix, regression
 - [ ] Firefox and WebKit nightly matrix
 - [ ] Deployed demo and published HTML report
 - [ ] Flake rate published from a repeat run
@@ -248,6 +264,7 @@ screenshots/           Real captures from the click-through audit
 | [docs/test-cases.md](docs/test-cases.md)                           | Traceability matrix, automated versus planned    |
 | [docs/business-rules.md](docs/business-rules.md)                   | The specification under test                     |
 | [docs/defects/defect-template.md](docs/defects/defect-template.md) | Defect report format                             |
+| [docs/defects/README.md](docs/defects/README.md)                   | Defect log with red and green run links          |
 | [docs/test-summary-template.md](docs/test-summary-template.md)     | Run summary format                               |
 | [DESIGN.md](DESIGN.md)                                             | Storefront direction and accessibility decisions |
 

@@ -97,6 +97,17 @@ audit runs manually before a release, the suite runs on every push.
   surface for little marginal signal on a small React app. The split is a
   decision, not a shortcut.
 
+## Fault injection
+
+Coverage is judged by whether the suite can fail for the right reason, not by a
+test count. Three deliberate faults were driven through introduce, detect,
+report, fix and verify on separate branches. Two exposed real gaps (cross-user
+idempotency and the cart merge path); one was caught by an existing boundary
+test. The red and green runs are linked in `docs/defects/README.md`.
+
+The faults never reached `main`. Each pull request merged only after the green
+run, and the merge commit preserves the three-step history.
+
 ## Deliberate non-goals
 
 - No test that asserts a hard-coded visual pixel value.
