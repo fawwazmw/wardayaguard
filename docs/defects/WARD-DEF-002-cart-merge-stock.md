@@ -42,7 +42,7 @@ stock 2.
 
 ## Evidence
 
-- Failing CI run: recorded on the pull request for this branch.
+- Failing CI run: [40999309601](https://github.com/fawwazmw/wardayaguard/actions/runs/40999309601)
 - Failing assertion: expected `409`, received `201`.
 - Trace and report: uploaded as the `playwright-report` artifact.
 
