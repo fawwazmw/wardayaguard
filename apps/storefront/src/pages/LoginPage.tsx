@@ -36,9 +36,10 @@ export function LoginPage() {
   }
 
   return (
-    <section className="narrow">
+    <section className="narrow auth">
+      <p className="kicker">Account</p>
       <h1>Sign in</h1>
-      <p className="muted">Use a demo account to place a test order.</p>
+      <p className="lede">Use a demo account to place a test order.</p>
 
       {error && (
         <div className="alert" role="alert">

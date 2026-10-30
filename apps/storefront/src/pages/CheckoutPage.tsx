@@ -108,6 +108,7 @@ export function CheckoutPage() {
 
   return (
     <section>
+      <p className="kicker">Your order</p>
       <h1>Checkout</h1>
 
       {error && <ErrorBanner message={error} />}

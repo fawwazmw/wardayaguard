@@ -50,10 +50,11 @@ export function CataloguePage() {
 
   return (
     <section>
-      <div className="page-head">
+      <header className="masthead">
+        <p className="kicker">The catalogue</p>
         <h1>Shop</h1>
-        <p className="muted">Everyday clothing, kept deliberately small.</p>
-      </div>
+        <p className="lede">A small collection in cotton, merino and canvas.</p>
+      </header>
 
       <div className="toolbar">
         <div className="field">
@@ -87,7 +88,7 @@ export function CataloguePage() {
 
       {products !== null && (
         <>
-          <p className="muted small" role="status">
+          <p className="result-count" role="status">
             {products.length} {products.length === 1 ? 'product' : 'products'}
           </p>
 
@@ -100,9 +101,9 @@ export function CataloguePage() {
               </button>
             </div>
           ) : (
-            <div className="grid">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} onAdd={handleAdd} />
+            <div className="catalogue">
+              {products.map((product, index) => (
+                <ProductCard key={product.id} index={index} product={product} onAdd={handleAdd} />
               ))}
             </div>
           )}

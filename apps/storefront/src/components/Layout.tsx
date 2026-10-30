@@ -35,7 +35,7 @@ export function Layout({ children }: { children: ReactNode }) {
             {user ? (
               <>
                 <span className="account">{user.name}</span>
-                <button type="button" className="secondary" onClick={() => void signOut()}>
+                <button type="button" className="text-button" onClick={() => void signOut()}>
                   Sign out
                 </button>
               </>

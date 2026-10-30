@@ -25,7 +25,10 @@ export function OrdersPage() {
 
   return (
     <section>
-      <h1>Orders</h1>
+      <header className="masthead">
+        <p className="kicker">History</p>
+        <h1>Orders</h1>
+      </header>
 
       {error && <ErrorBanner message={error} />}
       {!orders && !error && <Loading label="Loading orders..." />}

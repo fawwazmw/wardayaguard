@@ -12,9 +12,11 @@ function stockLabel(product: Product): string {
 
 export function ProductCard({
   product,
+  index,
   onAdd,
 }: {
   product: Product;
+  index: number;
   onAdd: (product: Product) => Promise<void>;
 }) {
   const { user } = useAuth();
@@ -30,25 +32,34 @@ export function ProductCard({
   }
 
   return (
-    <article className="card" data-testid="product-card">
-      <h2>{product.name}</h2>
-      <p className="muted small">{product.description}</p>
-      <p className="price">{formatMoney(product.priceCents)}</p>
-      <p className="muted small">{stockLabel(product)}</p>
+    <article className="product-row" data-testid="product-card">
+      <span className="product-index" aria-hidden="true">
+        {String(index + 1).padStart(2, '0')}
+      </span>
 
-      {!product.available ? (
-        <button type="button" disabled>
-          {product.active ? 'Sold out' : 'Unavailable'}
-        </button>
-      ) : !user ? (
-        <Link to={`/login?next=${encodeURIComponent('/')}`} className="button secondary">
-          Sign in to buy
-        </Link>
-      ) : (
-        <button type="button" onClick={() => void handleAdd()} disabled={busy}>
-          {busy ? 'Adding...' : 'Add to cart'}
-        </button>
-      )}
+      <div className="product-main">
+        <h2>{product.name}</h2>
+        <p className="product-desc">{product.description}</p>
+      </div>
+
+      <p className="product-stock">{stockLabel(product)}</p>
+      <p className="product-price">{formatMoney(product.priceCents)}</p>
+
+      <div className="product-action">
+        {!product.available ? (
+          <button type="button" disabled>
+            {product.active ? 'Sold out' : 'Unavailable'}
+          </button>
+        ) : !user ? (
+          <Link to={`/login?next=${encodeURIComponent('/')}`} className="text-link">
+            Sign in to buy
+          </Link>
+        ) : (
+          <button type="button" onClick={() => void handleAdd()} disabled={busy}>
+            {busy ? 'Adding...' : 'Add to cart'}
+          </button>
+        )}
+      </div>
     </article>
   );
 }

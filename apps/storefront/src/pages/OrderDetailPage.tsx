@@ -40,7 +40,7 @@ export function OrderDetailPage() {
       <h1 ref={headingRef} tabIndex={-1} data-testid="order-heading">
         {placed ? 'Order confirmed' : `Order #${order.id}`}
       </h1>
-      <p className="muted">
+      <p className="muted order-meta">
         Order #{order.id}. Status: {order.status}.
       </p>
 

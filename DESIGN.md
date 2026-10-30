@@ -1,74 +1,95 @@
 # Wardaya Store design direction
 
-The storefront is a **test fixture**, not the portfolio deliverable. The brief is
-deliberately narrow: credible enough for screenshots, boring enough to be
-reliable in CI, and correct for everyone who has to use it.
+Reading this as: small fashion catalogue for a QA portfolio fixture, editorial
+print language, dial **ENERGY 2 / RHYTHM 2 / MOTION 1**.
 
-Reading this as: e-commerce storefront for a QA portfolio demo, utilitarian
-catalogue language, dial **ENERGY 1 / RHYTHM 1 / MOTION 1**.
+The storefront is the application under test. The design has to look credible in
+screenshots, survive automated accessibility checks, and never compete with the
+test suite for attention.
 
 ## Identity
 
-- Name: Wardaya Store. The harness is WardayaGuard.
-- Personality: plain retail counter. No marketing voice, no urgency tactics,
-  no fake scarcity.
-- Every screen states what it is and what the next action is.
+A small clothing catalogue with the confidence of a print lookbook. No
+photography, no logo, no seasonal campaign. The products are described in type,
+separated by rules, and numbered like a catalogue index. The tone is quiet and
+direct: what it is, how much it costs, whether it is in stock.
+
+The footer states that this is a test fixture. Nothing pretends to be a real
+retailer.
 
 ## Palette
 
-| Token          | Value     | Use                            |
-| -------------- | --------- | ------------------------------ |
-| paper          | `#F7F6F3` | Page background                |
-| surface        | `#FFFFFF` | Cards, inputs                  |
-| ink            | `#17181A` | Body text                      |
-| muted          | `#5A5D5A` | Secondary text, 6.4:1 on paper |
-| line           | `#D9D6CE` | Borders and rules              |
-| accent         | `#1F5F4A` | Primary actions, focus ring    |
-| accent dark    | `#174937` | Hover                          |
-| danger         | `#9B3B2C` | Errors, 6.2:1 on error surface |
-| danger surface | `#FBEFEC` | Error banner background        |
+| Token          | Value     | Use                                  |
+| -------------- | --------- | ------------------------------------ |
+| paper          | `#F3EFE6` | Page background                      |
+| ink            | `#171512` | Text, primary buttons, strong rules  |
+| muted          | `#5C574D` | Secondary text, 6.3:1 on paper       |
+| line           | `#D5CDBF` | Row rules and field borders          |
+| line strong    | `#B9B0A0` | Input borders, secondary buttons     |
+| oxblood        | `#6A2230` | Accent: links, focus, hover, notices |
+| oxblood dark   | `#511823` | Accent hover                         |
+| danger         | `#8F2A1E` | Errors, 7:1 on the error surface     |
+| danger surface | `#F7E9E5` | Error banner background              |
 
-One accent only. Neutral paper instead of pure white so the white cards read as
-the content layer without shadows.
+Two cores, paper and ink, plus one accent. Oxblood is chosen because it reads as
+editorial fashion rather than a product dashboard, and it passes AA on paper
+without tuning.
 
 ## Typography
 
-System UI stack. Reason: the fixture must render identically in CI with no
-network font request, and a portfolio test project should not depend on a CDN to
-take a screenshot.
+- **Display and product names:** `"Iowan Old Style", "Palatino Linotype",
+Palatino, "Book Antiqua", Georgia, serif`. A serif gives the catalogue a print
+  voice, and the stack uses installed fonts so CI never fetches a webfont.
+- **Interface and prices:** `"Helvetica Neue", Helvetica, Arial, sans-serif`.
+  Neutral, legible at small sizes, and already present on every target machine.
+- **One italic voice:** the catalogue lede and kickers use the serif in italic.
+  It is the identity motif, used three or four times per visit, never on buttons.
 
-Sizes: 16px base, 14px secondary, 20px section, 30 to 34px page title. Weight
-600 for actions and labels, 700 for the brand. Tabular numerals for money.
+Sizes: 16px base, 13px labels, 24 to 26px product names, 42 to 61px page titles.
+Prices use tabular numerals so columns line up.
 
 ## Layout
 
-- Single 1080px shell, centered, 24px gutters, 16px on phones.
-- Header: brand, plain nav, cart count, account. One border, no shadow, not sticky.
-- Catalogue: `auto-fill` grid at 240px minimum. Everything else is a single
-  column capped at 640px.
-- Uniform rhythm is intentional at RHYTHM 1. No bento, no alternating bands.
+- 1180px shell with 32px gutters, 20px on phones.
+- A masthead per page: a serif italic kicker, a large title, a short lede.
+- The catalogue is a **numbered list**, not a card grid: index, name and
+  description, stock, price, action, separated by hairlines. That is the main
+  structural difference from a generic shop template.
+- The cart and order history use the same row rhythm, so the whole app reads as
+  one catalogue.
+- Checkout is two columns, form left and summary right, stacking under 900px.
+- No shadows, no rounded cards, no background texture. Rules and whitespace do
+  the work.
 
 ## Motion
 
-Hover and focus only, 120ms colour transitions. No entrance animation, no
-parallax, no skeleton shimmer.
+Hover and focus colour changes only, 120ms. No entrance animation, no transforms,
+no sticky flourishes beyond the checkout summary on desktop.
+
+## One theme, on purpose
+
+The app ships a single light theme. The paper and ink palette is the identity:
+a dark catalogue would be a different brand, and a theme toggle would add a
+second visual system for no user need in a test fixture. This is a documented
+choice, not deferred work.
 
 ## States
 
-Every data view ships loading, empty and error states. Empty and error copy
-names the cause and offers one action.
+Every data view has loading, empty and error states. Empty states are written as
+catalogue notes, not illustrations, and always offer one action.
 
 ## Accessibility
 
-- Contrast: all text meets WCAG AA, checked on the real surfaces.
-- Focus: 2px accent outline with 2px offset. Never removed.
-- Targets: 44px minimum height on buttons, inputs and selects.
-- Forms: every input has a visible label, errors are text, not colour alone.
-- Keyboard: no custom widgets, so native tab order is the interaction model.
-- Responsive: single column under 700px, no horizontal overflow.
+- All text meets WCAG AA on the real surfaces. axe-core runs on seven page
+  states on every browser.
+- Focus is a 2px oxblood outline with a 3px offset, never removed.
+- Buttons, inputs and select are at least 44px tall.
+- Product rows are `article` elements with an `h2`; the index is decorative and
+  hidden from assistive technology.
+- No custom widgets, so native tab order is the interaction model.
 
 ## Deliberately excluded
 
-No logo asset, no product photography, no testimonials, no statistics, no FAQ,
-no chat widget, no newsletter. There is no content for them, and a fixture that
-pretends to have customers would be dishonest.
+No product photography, no logo asset, no testimonials, no statistics, no FAQ,
+no newsletter, no countdown, no stock scarcity copy. There is no real content
+for them, and inventing it would be the opposite of what this project is for.

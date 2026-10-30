@@ -98,7 +98,10 @@ export function CartPage() {
 
   return (
     <section>
-      <h1>Cart</h1>
+      <header className="masthead">
+        <p className="kicker">Your selection</p>
+        <h1>Cart</h1>
+      </header>
 
       {error && <ErrorBanner message={error} />}
 
