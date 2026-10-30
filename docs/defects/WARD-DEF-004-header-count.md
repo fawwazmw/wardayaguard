@@ -43,7 +43,7 @@ $87.00, so the wrong value is isolated to the badge.
 
 ## Evidence
 
-- Failing CI run: recorded on the pull request for this branch.
+- Failing CI run: [41069728940](https://github.com/fawwazmw/wardayaguard/actions/runs/41069728940)
 - Failing assertion: expected `"3"`, received `"1"`.
 - Screenshot: [WARD-DEF-004-header-count.png](../evidence/WARD-DEF-004-header-count.png)
 - Trace: `test-results/.../trace.zip` from the failing run, also uploaded as a

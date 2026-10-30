@@ -64,7 +64,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart(await apiRequest<Cart>('/cart'));
   }, []);
 
-  const count = cart.items.length;
+  const count = cart.items.reduce((total, item) => total + item.quantity, 0);
 
   const value = useMemo<CartValue>(
     () => ({ cart, count, loaded, refresh, add, update, remove }),
