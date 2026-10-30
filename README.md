@@ -19,15 +19,15 @@ its pricing, inventory, checkout, authorization and customer-journey rules hold.
 | -------------------------------------- | ------ | ----------- |
 | Unit (pricing rules)                   | 13     | Passing     |
 | API (contract, authz, checkout, stock) | 52     | Passing     |
-| UI (customer journeys, Chromium)       | 23     | Passing     |
-| **Total**                              | **88** | **Passing** |
+| UI (customer journeys, Chromium)       | 26     | Passing     |
+| **Total**                              | **91** | **Passing** |
 
 Latest run: Node 24.18.0, macOS, Chromium 156, seed reset before every test.
-Playwright: 75 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean.
+Playwright: 78 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean.
 
 CI runs the API suite and the Chromium UI suite on every push and pull request.
-The nightly matrix runs the same 23 UI cases on Chromium, Firefox and WebKit,
-one job per browser, 69 UI executions per night. Latest nightly:
+The nightly matrix runs the same 26 UI cases on Chromium, Firefox and WebKit,
+one job per browser, 78 UI executions per night. Latest nightly:
 [41020839448](https://github.com/fawwazmw/wardayaguard/actions/runs/41020839448),
 all three green.
 
@@ -56,6 +56,9 @@ all three green.
   no stack trace and no internal message.
 - **Real journeys.** Login, catalogue search and sort, cart quantity change,
   checkout, confirmation, order history, and the same journey at 390px.
+- **Accessibility is measured.** axe-core scans the catalogue, empty search,
+  login, cart, checkout, confirmation and order history against WCAG A and AA
+  on every browser. A violation fails the suite.
 - **Deterministic data.** Every test starts from a reset seed, so execution
   order cannot change a result.
 - **Catalogue contract.** Eight products are asserted against a fixture that is
@@ -190,6 +193,10 @@ evidence to [docs/evidence/clickthrough-2026-10-30.json](docs/evidence/clickthro
 - empty states for cart, orders and search: present
 - every flow clicked once: sign in, add, quantity update, checkout, sign out
 
+Accessibility is also asserted in the suite itself: axe-core reports 0 WCAG A/AA
+violations across seven page states (catalogue, empty search, login, cart,
+checkout, confirmation, order history) on every browser.
+
 ## Continuous integration
 
 `.github/workflows/ci.yml` runs on every push to `main` and every pull request:
@@ -246,8 +253,6 @@ caught it without new coverage. Full log and reasoning:
 - SQLite serializes writes in one process. The oversell test proves the guarded
   stock update, not distributed locking.
 - API and UI suites share one database and one worker.
-- No automated accessibility scan (axe-core) yet. Keyboard focus and contrast
-  are covered by the UI test and the audit above.
 - No tax, payment provider, carrier integration, rate limiting or lockout.
 - The report is published. The demo is a one-click Render blueprint and is not
   hosted yet. Free hosting has an ephemeral disk, so its SQLite data resets on
@@ -265,7 +270,7 @@ caught it without new coverage. Full log and reasoning:
 - [x] HTML report published to GitHub Pages
 - [x] Dockerfile and Render blueprint for a single-service demo
 - [x] Chromium, Firefox and WebKit nightly matrix
-- [ ] Checkout accessibility scan with axe-core
+- [x] axe-core WCAG A and AA scans on every customer page
 - [ ] Hosted demo from the Render blueprint
 - [ ] Flake rate published from a repeat run
 - [ ] One deep failure investigation write-up with a trace

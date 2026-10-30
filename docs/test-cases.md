@@ -2,7 +2,7 @@
 
 Traceability between the designed cases and the automation that proves them.
 `Automated` means a test exists in this repository and passed on the last run
-(2026-10-30: 13 unit, 52 API, 23 UI). `Planned` means designed but not
+(2026-10-30: 13 unit, 52 API, 26 UI). `Planned` means designed but not
 implemented yet.
 
 IDs are area prefixed because the area already namespaces them. Defects use
@@ -99,6 +99,14 @@ IDs are area prefixed because the area already namespaces them. Defects use
 | REG-009 | Order history lists only the customer's orders                | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
 | REG-011 | Expired discount code is reported and creates no order        | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
 | REG-011 | Expired discount code is reported and creates no order        | P1       | UI    | Automated | `tests/e2e/checkout.spec.ts`   |
+
+## H. Accessibility
+
+| ID       | Title                                                                 | Priority | Layer | Status    | Spec                     |
+| -------- | --------------------------------------------------------------------- | -------- | ----- | --------- | ------------------------ |
+| A11Y-001 | Catalogue, empty search and login have no WCAG A/AA violations        | P2       | UI    | Automated | `tests/e2e/a11y.spec.ts` |
+| A11Y-002 | Cart has no WCAG A/AA violations                                      | P2       | UI    | Automated | `tests/e2e/a11y.spec.ts` |
+| A11Y-003 | Checkout, confirmation and order history have no WCAG A/AA violations | P2       | UI    | Automated | `tests/e2e/a11y.spec.ts` |
 
 ## Browser matrix
 

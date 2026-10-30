@@ -43,7 +43,8 @@ controllable, not as the portfolio deliverable.
 - Tax calculation.
 - Load and soak testing at production scale.
 - Email delivery and password reset.
-- Accessibility beyond the checkout journey (pending, axe-core).
+- Accessibility: WCAG A and AA scans on every customer page, plus keyboard
+  focus on checkout.
 
 ## 4. Environments
 

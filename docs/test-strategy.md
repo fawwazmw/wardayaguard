@@ -51,8 +51,12 @@ than an API test plus a unit test. The UI test is reserved for the journey.
 
 ## State and accessibility audit
 
-Assertions cover behaviour. A separate click-through audit covers what is easy
-to miss:
+Accessibility is automated first. `tests/e2e/a11y.spec.ts` runs axe-core with
+the `wcag2a`, `wcag2aa`, `wcag21a` and `wcag21aa` tags against the catalogue,
+the empty search state, login, cart, checkout, order confirmation and order
+history. A violation fails the UI suite on every browser.
+
+A separate click-through audit covers what assertions and axe do not:
 
 - loading, empty and error states on catalogue, cart, orders and search
 - per-element contrast against the real background
