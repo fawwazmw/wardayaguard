@@ -99,6 +99,14 @@ audit runs manually before a release, the suite runs on every push.
   surface for little marginal signal on a small React app. The split is a
   decision, not a shortcut.
 
+### Local browser note
+
+On macOS 27, the pinned Firefox build (157.0, Playwright build 1555) exits at
+launch with `Could not find profile folder`, even with a pre-created profile and
+no `-profile` flag. That is an engine and OS failure, not an application
+failure, so it is triaged as an environment issue and Firefox is verified on the
+Ubuntu nightly runner instead. Chromium and WebKit pass locally.
+
 ## Fault injection
 
 Coverage is judged by whether the suite can fail for the right reason, not by a

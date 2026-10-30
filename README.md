@@ -3,7 +3,7 @@
 **Regression test suite for Wardaya Store, a seeded e-commerce stack.**
 TypeScript, Playwright, Vitest, React, Express, SQLite, GitHub Actions.
 
-[![CI](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml)
+[![CI](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml) [![Nightly browsers](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml)
 
 **Live test report:** https://fawwazmw.github.io/wardayaguard/
 
@@ -27,7 +27,9 @@ Playwright: 75 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean
 
 CI runs the API suite and the Chromium UI suite on every push and pull request.
 The nightly matrix runs the same 23 UI cases on Chromium, Firefox and WebKit,
-one job per browser.
+one job per browser, 69 UI executions per night. Latest nightly:
+[41020839448](https://github.com/fawwazmw/wardayaguard/actions/runs/41020839448),
+all three green.
 
 ## Screenshots
 
@@ -208,7 +210,9 @@ group so a newer commit cannot cancel a deploy mid-flight.
 A `Nightly browsers` workflow runs the UI suite on Chromium, Firefox and WebKit
 at 18:10 UTC, one job per browser, and can be triggered manually with
 `gh workflow run nightly.yml`. Each job uploads its own report, so a
-browser-specific failure is isolated instead of hidden behind a shared run.
+browser-specific failure is isolated instead of hidden behind a shared run. The
+first manual run, [41020839448](https://github.com/fawwazmw/wardayaguard/actions/runs/41020839448),
+passed on all three engines.
 
 A third job builds the production Docker image and smoke-tests it: start the
 container, wait for `/api/health`, fetch `/`, then remove it. That keeps the
