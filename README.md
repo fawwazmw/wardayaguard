@@ -3,6 +3,8 @@
 **Regression test suite for Wardaya Store, a seeded e-commerce stack.**
 TypeScript, Playwright, Vitest, React, Express, SQLite, GitHub Actions.
 
+[![CI](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml/badge.svg)](https://github.com/fawwazmw/wardayaguard/actions/workflows/ci.yml)
+
 Wardaya Store is the system under test. WardayaGuard is the harness that proves
 its pricing, inventory, checkout, authorization and customer-journey rules hold.
 
@@ -178,6 +180,21 @@ evidence to [docs/evidence/clickthrough-2026-10-30.json](docs/evidence/clickthro
 - horizontal overflow at 390px on shop, cart and checkout: 0
 - empty states for cart, orders and search: present
 - every flow clicked once: sign in, add, quantity update, checkout, sign out
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every push to `main` and every pull request:
+
+1. Install dependencies from the lockfile.
+2. Typecheck both workspaces.
+3. Run the pricing unit suite.
+4. Install Chromium.
+5. Build the storefront.
+6. Run the API and UI projects in one Playwright run.
+7. Upload the HTML report and traces as a workflow artifact.
+
+The badge above reflects the latest run on `main`. The first run is
+[40992908642](https://github.com/fawwazmw/wardayaguard/actions/runs/40992908642).
 
 ## Known limitations
 
