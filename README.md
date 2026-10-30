@@ -317,6 +317,7 @@ screenshots/           Real captures from the click-through audit
 | [docs/investigations/WARD-INV-001-header-count.md](docs/investigations/WARD-INV-001-header-count.md) | Trace walkthrough for WARD-DEF-004               |
 | [docs/deployment.md](docs/deployment.md)                                                             | Live report, Docker image and Render blueprint   |
 | [docs/release-checklist.md](docs/release-checklist.md)                                               | Verified release checklist and honest gaps       |
+| [docs/demo-script.md](docs/demo-script.md)                                                           | Three-minute walkthrough and interview Q&A       |
 | [docs/test-summary-template.md](docs/test-summary-template.md)                                       | Run summary format                               |
 | [DESIGN.md](DESIGN.md)                                                                               | Storefront direction and accessibility decisions |
 
