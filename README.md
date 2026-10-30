@@ -28,8 +28,8 @@ Playwright: 78 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean
 CI runs the API suite and the Chromium UI suite on every push and pull request.
 The nightly matrix runs the same 26 UI cases on Chromium, Firefox and WebKit,
 one job per browser, 78 UI executions per night. Latest nightly:
-[41020839448](https://github.com/fawwazmw/wardayaguard/actions/runs/41020839448),
-all three green.
+[41067964167](https://github.com/fawwazmw/wardayaguard/actions/runs/41067964167),
+all three green with axe enabled.
 
 ## Screenshots
 
@@ -124,27 +124,32 @@ so a dev server on 4000/5173 is left alone.
 
 ## Commands
 
-| Command             | What it does                       |
-| ------------------- | ---------------------------------- |
-| `npm run dev:api`   | API with watch mode on port 4000   |
-| `npm run dev:web`   | Storefront with Vite on port 5173  |
-| `npm run seed`      | Reset the dev database to the seed |
-| `npm run test:unit` | Pricing rules with Vitest          |
-| `npm run test:api`  | API suite with Playwright          |
-| `npm run test:e2e`  | UI suite with Chromium             |
-| `npm run test:ci`   | API and Chromium, what CI runs     |
-| `npm run test:all`  | API and all three browser projects |
-| `npm run build:web` | Typecheck and production build     |
-| `npm run typecheck` | TypeScript, both workspaces        |
-| `npm run lint`      | ESLint                             |
-| `npm run format`    | Prettier write                     |
-| `npm run report`    | Open the Playwright HTML report    |
+| Command              | What it does                            |
+| -------------------- | --------------------------------------- |
+| `npm run dev:api`    | API with watch mode on port 4000        |
+| `npm run dev:web`    | Storefront with Vite on port 5173       |
+| `npm run seed`       | Reset the dev database to the seed      |
+| `npm run test:unit`  | Pricing rules with Vitest               |
+| `npm run test:api`   | API suite with Playwright               |
+| `npm run test:e2e`   | UI suite with Chromium                  |
+| `npm run test:ci`    | API and Chromium, what CI runs          |
+| `npm run test:flake` | API and Chromium, each test three times |
+| `npm run test:all`   | API and all three browser projects      |
+| `npm run build:web`  | Typecheck and production build          |
+| `npm run typecheck`  | TypeScript, both workspaces             |
+| `npm run lint`       | ESLint                                  |
+| `npm run format`     | Prettier write                          |
+| `npm run report`     | Open the Playwright HTML report         |
 
 To measure flakiness rather than guess:
 
 ```bash
-npx playwright test --project=chromium --repeat-each=3
+npm run test:flake
 ```
+
+Latest measurement: 234 executions (78 tests repeated three times), 234 passed,
+0 flaky, 59.5s. Details in
+[docs/evidence/flake-2026-10-30.md](docs/evidence/flake-2026-10-30.md).
 
 ## Seeded data
 
@@ -192,6 +197,7 @@ evidence to [docs/evidence/clickthrough-2026-10-30.json](docs/evidence/clickthro
 - horizontal overflow at 390px on shop, cart and checkout: 0
 - empty states for cart, orders and search: present
 - every flow clicked once: sign in, add, quantity update, checkout, sign out
+- flake rate: 0 out of 234 executions (78 tests repeated three times)
 
 Accessibility is also asserted in the suite itself: axe-core reports 0 WCAG A/AA
 violations across seven page states (catalogue, empty search, login, cart,
@@ -218,8 +224,8 @@ A `Nightly browsers` workflow runs the UI suite on Chromium, Firefox and WebKit
 at 18:10 UTC, one job per browser, and can be triggered manually with
 `gh workflow run nightly.yml`. Each job uploads its own report, so a
 browser-specific failure is isolated instead of hidden behind a shared run. The
-first manual run, [41020839448](https://github.com/fawwazmw/wardayaguard/actions/runs/41020839448),
-passed on all three engines.
+latest manual run, [41067964167](https://github.com/fawwazmw/wardayaguard/actions/runs/41067964167),
+passed on all three engines with the axe checks included.
 
 A third job builds the production Docker image and smoke-tests it: start the
 container, wait for `/api/health`, fetch `/`, then remove it. That keeps the
@@ -271,8 +277,8 @@ caught it without new coverage. Full log and reasoning:
 - [x] Dockerfile and Render blueprint for a single-service demo
 - [x] Chromium, Firefox and WebKit nightly matrix
 - [x] axe-core WCAG A and AA scans on every customer page
+- [x] Flake rate published from a repeat run
 - [ ] Hosted demo from the Render blueprint
-- [ ] Flake rate published from a repeat run
 - [ ] One deep failure investigation write-up with a trace
 
 ## Repository layout
