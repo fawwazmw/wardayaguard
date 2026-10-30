@@ -19,17 +19,16 @@ its pricing, inventory, checkout, authorization and customer-journey rules hold.
 | -------------------------------------- | ------ | ----------- |
 | Unit (pricing rules)                   | 13     | Passing     |
 | API (contract, authz, checkout, stock) | 52     | Passing     |
-| UI (customer journeys, Chromium)       | 26     | Passing     |
-| **Total**                              | **91** | **Passing** |
+| UI (customer journeys, Chromium)       | 27     | Passing     |
+| **Total**                              | **92** | **Passing** |
 
 Latest run: Node 24.18.0, macOS, Chromium 156, seed reset before every test.
-Playwright: 78 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean.
+Playwright: 79 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean.
 
 CI runs the API suite and the Chromium UI suite on every push and pull request.
-The nightly matrix runs the same 26 UI cases on Chromium, Firefox and WebKit,
-one job per browser, 78 UI executions per night. Latest nightly:
-[41067964167](https://github.com/fawwazmw/wardayaguard/actions/runs/41067964167),
-all three green with axe enabled.
+The nightly matrix runs the same 27 UI cases on Chromium, Firefox and WebKit,
+one job per browser, 81 UI executions per night:
+[nightly workflow](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml).
 
 ## Screenshots
 
@@ -147,8 +146,8 @@ To measure flakiness rather than guess:
 npm run test:flake
 ```
 
-Latest measurement: 234 executions (78 tests repeated three times), 234 passed,
-0 flaky, 59.5s. Details in
+Latest measurement: 237 executions (79 tests repeated three times), 237 passed,
+0 flaky, 1.0m. Details in
 [docs/evidence/flake-2026-10-30.md](docs/evidence/flake-2026-10-30.md).
 
 ## Seeded data
@@ -197,7 +196,7 @@ evidence to [docs/evidence/clickthrough-2026-10-30.json](docs/evidence/clickthro
 - horizontal overflow at 390px on shop, cart and checkout: 0
 - empty states for cart, orders and search: present
 - every flow clicked once: sign in, add, quantity update, checkout, sign out
-- flake rate: 0 out of 234 executions (78 tests repeated three times)
+- flake rate: 0 out of 237 executions (79 tests repeated three times)
 
 Accessibility is also asserted in the suite itself: axe-core reports 0 WCAG A/AA
 violations across seven page states (catalogue, empty search, login, cart,
@@ -224,8 +223,9 @@ A `Nightly browsers` workflow runs the UI suite on Chromium, Firefox and WebKit
 at 18:10 UTC, one job per browser, and can be triggered manually with
 `gh workflow run nightly.yml`. Each job uploads its own report, so a
 browser-specific failure is isolated instead of hidden behind a shared run. The
-latest manual run, [41067964167](https://github.com/fawwazmw/wardayaguard/actions/runs/41067964167),
-passed on all three engines with the axe checks included.
+latest manual run passed on all three engines with the axe checks included. See
+the [nightly workflow](https://github.com/fawwazmw/wardayaguard/actions/workflows/nightly.yml)
+for the current state.
 
 A third job builds the production Docker image and smoke-tests it: start the
 container, wait for `/api/health`, fetch `/`, then remove it. That keeps the
@@ -236,7 +236,7 @@ The badge above reflects the latest run on `main`. The first run is
 
 ## Defect and fault-injection lifecycle
 
-Three defects were injected deliberately and driven through introduce, detect,
+Four defects were injected deliberately and driven through introduce, detect,
 report, fix and verify on separate branches and pull requests. The fault, the
 failing test, the report and the fix are separate commits, so both the red and
 the green runs are visible.
@@ -246,11 +246,16 @@ the green runs are visible.
 | WARD-DEF-001 | Idempotency key leaked across customers    | Critical | New test `API-006`  | [run](https://github.com/fawwazmw/wardayaguard/actions/runs/40998891243) | [#1](https://github.com/fawwazmw/wardayaguard/pull/1) |
 | WARD-DEF-002 | Cart merge bypassed the stock guard        | High     | New test `CART-006` | [run](https://github.com/fawwazmw/wardayaguard/actions/runs/40999309601) | [#2](https://github.com/fawwazmw/wardayaguard/pull/2) |
 | WARD-DEF-003 | Free shipping excluded the exact threshold | High     | Existing unit test  | [run](https://github.com/fawwazmw/wardayaguard/actions/runs/40999666482) | [#3](https://github.com/fawwazmw/wardayaguard/pull/3) |
+| WARD-DEF-004 | Cart badge counted lines, not units        | Medium   | New test `CART-007` | [run](https://github.com/fawwazmw/wardayaguard/actions/runs/41069728940) | [#4](https://github.com/fawwazmw/wardayaguard/pull/4) |
 
-The first two were real coverage gaps, so detection required a new test. The
-third was already guarded by the 4999/5000/5001 boundary test, so the suite
-caught it without new coverage. Full log and reasoning:
+001, 002 and 004 were real coverage gaps, so detection required a new test. 003
+was already guarded by the 4999/5000/5001 boundary test, so the suite caught it
+without new coverage. Full log:
 [docs/defects/README.md](docs/defects/README.md).
+
+Deep dive: [WARD-INV-001](docs/investigations/WARD-INV-001-header-count.md) walks
+the WARD-DEF-004 failure through the trace: what the network showed, what the
+DOM showed, and the five steps to the wrong aggregate.
 
 ## Known limitations
 
@@ -279,7 +284,7 @@ caught it without new coverage. Full log and reasoning:
 - [x] axe-core WCAG A and AA scans on every customer page
 - [x] Flake rate published from a repeat run
 - [ ] Hosted demo from the Render blueprint
-- [ ] One deep failure investigation write-up with a trace
+- [x] One deep failure investigation write-up with a trace
 
 ## Repository layout
 
@@ -300,17 +305,18 @@ screenshots/           Real captures from the click-through audit
 
 ## Documentation
 
-| File                                                               | Purpose                                          |
-| ------------------------------------------------------------------ | ------------------------------------------------ |
-| [docs/test-plan.md](docs/test-plan.md)                             | Scope, environments, risks, exit criteria        |
-| [docs/test-strategy.md](docs/test-strategy.md)                     | Layers, isolation, flake and browser policy      |
-| [docs/test-cases.md](docs/test-cases.md)                           | Traceability matrix, automated versus planned    |
-| [docs/business-rules.md](docs/business-rules.md)                   | The specification under test                     |
-| [docs/defects/defect-template.md](docs/defects/defect-template.md) | Defect report format                             |
-| [docs/defects/README.md](docs/defects/README.md)                   | Defect log with red and green run links          |
-| [docs/deployment.md](docs/deployment.md)                           | Live report, Docker image and Render blueprint   |
-| [docs/test-summary-template.md](docs/test-summary-template.md)     | Run summary format                               |
-| [DESIGN.md](DESIGN.md)                                             | Storefront direction and accessibility decisions |
+| File                                                                                                 | Purpose                                          |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [docs/test-plan.md](docs/test-plan.md)                                                               | Scope, environments, risks, exit criteria        |
+| [docs/test-strategy.md](docs/test-strategy.md)                                                       | Layers, isolation, flake and browser policy      |
+| [docs/test-cases.md](docs/test-cases.md)                                                             | Traceability matrix, automated versus planned    |
+| [docs/business-rules.md](docs/business-rules.md)                                                     | The specification under test                     |
+| [docs/defects/defect-template.md](docs/defects/defect-template.md)                                   | Defect report format                             |
+| [docs/defects/README.md](docs/defects/README.md)                                                     | Defect log with red and green run links          |
+| [docs/investigations/WARD-INV-001-header-count.md](docs/investigations/WARD-INV-001-header-count.md) | Trace walkthrough for WARD-DEF-004               |
+| [docs/deployment.md](docs/deployment.md)                                                             | Live report, Docker image and Render blueprint   |
+| [docs/test-summary-template.md](docs/test-summary-template.md)                                       | Run summary format                               |
+| [DESIGN.md](DESIGN.md)                                                                               | Storefront direction and accessibility decisions |
 
 ## License
 
