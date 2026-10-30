@@ -67,14 +67,15 @@ IDs are area prefixed because the area already namespaces them. Defects use
 
 ## E. API, security and reliability
 
-| ID      | Title                                                        | Priority | Layer | Status    | Spec                           |
-| ------- | ------------------------------------------------------------ | -------- | ----- | --------- | ------------------------------ |
-| API-001 | Protected endpoints reject missing or invalid authentication | P1       | API   | Automated | `tests/api/auth.api.spec.ts`   |
-| API-002 | A user cannot read another user's order                      | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
-| API-002 | Another customer cannot open the order by id in the browser  | P1       | UI    | Automated | `tests/e2e/regression.spec.ts` |
-| API-003 | Malformed bodies return controlled validation errors         | P1       | API   | Automated | `tests/api/auth.api.spec.ts`   |
-| API-004 | Repeated requests do not oversell the final unit             | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
-| API-005 | Server errors expose no stack trace or secret                | P1       | API   | Automated | `tests/api/health.api.spec.ts` |
+| ID      | Title                                                         | Priority | Layer | Status    | Spec                           |
+| ------- | ------------------------------------------------------------- | -------- | ----- | --------- | ------------------------------ |
+| API-001 | Protected endpoints reject missing or invalid authentication  | P1       | API   | Automated | `tests/api/auth.api.spec.ts`   |
+| API-002 | A user cannot read another user's order                       | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
+| API-002 | Another customer cannot open the order by id in the browser   | P1       | UI    | Automated | `tests/e2e/regression.spec.ts` |
+| API-003 | Malformed bodies return controlled validation errors          | P1       | API   | Automated | `tests/api/auth.api.spec.ts`   |
+| API-004 | Repeated requests do not oversell the final unit              | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
+| API-005 | Server errors expose no stack trace or secret                 | P1       | API   | Automated | `tests/api/health.api.spec.ts` |
+| API-006 | Two customers reusing one idempotency key get separate orders | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
 
 ## F. Regression and usability
 
