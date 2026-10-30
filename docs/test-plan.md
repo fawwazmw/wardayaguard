@@ -7,13 +7,13 @@ not verify, and the evidence required to call a release testable.
 
 ## 2. System under test
 
-| Component  | Detail                                       |
-| ---------- | -------------------------------------------- |
-| Storefront | React and Vite single page app (in progress) |
-| API        | Express 5 REST API, TypeScript               |
-| Database   | SQLite, deterministic seed                   |
-| Auth       | Opaque bearer tokens stored server side      |
-| Money      | Integer cents, USD                           |
+| Component  | Detail                                  |
+| ---------- | --------------------------------------- |
+| Storefront | React 19 and Vite single page app       |
+| API        | Express 5 REST API, TypeScript          |
+| Database   | SQLite, deterministic seed              |
+| Auth       | Opaque bearer tokens stored server side |
+| Money      | Integer cents, USD                      |
 
 The application is a fixture. It exists to make behaviour observable and
 controllable, not as the portfolio deliverable.
@@ -31,7 +31,8 @@ controllable, not as the portfolio deliverable.
 - Idempotent checkout.
 - Authorization: cart and order ownership (IDOR).
 - Error envelope and information leakage.
-- Storefront critical journeys (pending).
+- Storefront critical journeys: login, catalogue, cart, checkout, confirmation,
+  order history, mobile width, keyboard focus.
 - Cross-browser execution of critical journeys (pending).
 
 ### Out of scope
@@ -83,21 +84,25 @@ only when `ALLOW_TEST_ROUTES=1`.
 
 ## 8. Risks and coverage
 
-| Risk                                   | Impact                           | Coverage                                                 |
-| -------------------------------------- | -------------------------------- | -------------------------------------------------------- |
-| Overselling the last unit              | High, customer trust and refunds | API-004 concurrency test                                 |
-| Duplicate order from a retried request | High, double charge              | CHK-005 idempotency replay                               |
-| Reading another customer's order       | Critical, data breach            | API-002 IDOR test                                        |
-| Wrong total after discount             | High, revenue and disputes       | CHK-003 plus unit pricing suite                          |
-| Stock drift after a failed checkout    | High, silent inventory loss      | Transaction rollback in checkout, stock assertion        |
-| Password or account enumeration        | Medium                           | AUTH-002 identical responses                             |
-| Internal error leaking a stack trace   | Medium                           | API-005 fault injection                                  |
-| Unavailable product still purchasable  | Medium                           | PROD-004                                                 |
-| Flaky tests eroding trust              | Medium                           | Isolation, reset per test, flake policy in test strategy |
+| Risk                                     | Impact                           | Coverage                                                 |
+| ---------------------------------------- | -------------------------------- | -------------------------------------------------------- |
+| Overselling the last unit                | High, customer trust and refunds | API-004 concurrency test                                 |
+| Duplicate order from a retried request   | High, double charge              | CHK-005 idempotency replay                               |
+| Reading another customer's order         | Critical, data breach            | API-002 IDOR test                                        |
+| Wrong total after discount               | High, revenue and disputes       | CHK-003 plus unit pricing suite                          |
+| Stock drift after a failed checkout      | High, silent inventory loss      | Transaction rollback in checkout, stock assertion        |
+| Password or account enumeration          | Medium                           | AUTH-002 identical responses                             |
+| Internal error leaking a stack trace     | Medium                           | API-005 fault injection                                  |
+| Unavailable product still purchasable    | Medium                           | PROD-004                                                 |
+| Layout breaks at phone width             | Medium                           | REG-004 overflow assertion                               |
+| Checkout cannot be completed by keyboard | Medium                           | REG-005 focus and tab order                              |
+| Flaky tests eroding trust                | Medium                           | Isolation, reset per test, flake policy in test strategy |
 
 ## 9. Reporting
 
 - Playwright HTML report with traces retained on failure.
 - `docs/test-summary-template.md` for the human summary.
 - Defects follow `docs/defects/defect-template.md`.
+- `docs/evidence/` holds click-through audits: console errors, contrast,
+  target sizes and horizontal overflow.
 - Metrics are copied from a real run. They are never estimated.

@@ -8,6 +8,8 @@ export default tseslint.config(
       'playwright-report/**',
       'test-results/**',
       '.data/**',
+      'dist/**',
+      '**/dist/**',
       'package-lock.json',
     ],
   },

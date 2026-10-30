@@ -1,0 +1,91 @@
+{
+  "checks": [
+    {
+      "name": "catalogue renders 8 products",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "cart redirects a signed out visitor to login",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "signed in as the standard account",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "empty cart state is shown",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "empty orders state is shown",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "header cart count is 1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "empty search state is shown",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "price sorting puts Archive Jacket first",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "quantity update recalculates the subtotal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "order confirmation shows the discounted total",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "order history lists the new order",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "unknown route renders the not found page",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "confirmedTotal": "$160.20",
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": [],
+  "contrastIssues": [],
+  "smallTargets": [],
+  "overflow": [
+    {
+      "page": "/ (mobile)",
+      "value": 0
+    },
+    {
+      "page": "/cart (mobile)",
+      "value": 0
+    },
+    {
+      "page": "/checkout (mobile)",
+      "value": 0
+    }
+  ],
+  "clicks": [
+    "sign in",
+    "add Aurora Hoodie to cart",
+    "update quantity",
+    "fill checkout form",
+    "sign out"
+  ]
+}

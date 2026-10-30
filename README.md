@@ -1,73 +1,91 @@
 # WardayaGuard
 
 **Regression test suite for Wardaya Store, a seeded e-commerce stack.**
-TypeScript, Playwright, Vitest, Express, SQLite, GitHub Actions.
+TypeScript, Playwright, Vitest, React, Express, SQLite, GitHub Actions.
 
 Wardaya Store is the system under test. WardayaGuard is the harness that proves
-its pricing, inventory, checkout and authorization rules hold.
+its pricing, inventory, checkout, authorization and customer-journey rules hold.
 
-> **Status: in progress.** The API and unit suites are implemented and passing.
-> The storefront and the UI suite are next. Every number below comes from a real
-> local run on 2026-10-29, not an estimate.
+> **Status: working end to end.** API, storefront and both test layers are
+> implemented. Every number below comes from a real local run on 2026-10-30.
 
 ## Current results
 
-| Suite                                  | Tests  | Status        |
-| -------------------------------------- | ------ | ------------- |
-| Unit (pricing rules)                   | 13     | Passing       |
-| API (contract, authz, checkout, stock) | 50     | Passing       |
-| UI (customer journeys)                 | 0      | Not built yet |
-| **Total**                              | **63** | **Passing**   |
+| Suite                                  | Tests  | Status      |
+| -------------------------------------- | ------ | ----------- |
+| Unit (pricing rules)                   | 13     | Passing     |
+| API (contract, authz, checkout, stock) | 50     | Passing     |
+| UI (customer journeys, Chromium)       | 23     | Passing     |
+| **Total**                              | **86** | **Passing** |
 
-Latest run: Node 24.18.0, macOS, SQLite seed, `npm test`. Duration under 10
-seconds. Cross-browser execution starts with the storefront.
+Latest run: Node 24.18.0, macOS, Chromium 156, seed reset before every test.
+Playwright: 73 tests in 28.9s. Vitest: 13 tests in 0.1s. Typecheck, ESLint and
+Prettier are clean.
+
+## Screenshots
+
+![Catalogue at desktop width](screenshots/shop-desktop.png)
+
+![Order confirmation with a discount and free shipping](screenshots/order-confirmed.png)
+
+![Catalogue at a 390px phone width](screenshots/shop-mobile.png)
 
 ## What the suite actually demonstrates
 
 - **Business rules, not button clicks.** Totals are asserted as exact integers
-  from the API and from a pure pricing module, including the boundary at 4999
-  versus 5000 cents and the half-up rounding rule.
+  from the API and from a pure pricing module, including the 4999 versus 5000
+  cent shipping boundary and half-up rounding.
 - **Idempotent checkout.** Replaying the same `Idempotency-Key` returns the
-  original order with `200` and `replayed: true`, one order row, one stock
+  original order with `200` and `replayed: true`: one order row, one stock
   decrement.
 - **No overselling.** Two customers hold the last two units at the same time.
   Exactly one checkout succeeds and stock lands on zero.
 - **Authorization.** A second customer reading the first customer's order gets
-  `404`, not `403`, so the API does not confirm the id exists.
+  `404`, not `403`, so the API does not confirm the id exists. The UI test
+  repeats the attempt through the browser.
 - **Information leakage.** A thrown server fault returns a generic `500` with
-  no stack trace, no internal message (fault injection endpoint, test only).
-- **Deterministic data.** Every test starts from a reset seed. Execution order
-  cannot change a result.
+  no stack trace and no internal message.
+- **Real journeys.** Login, catalogue search and sort, cart quantity change,
+  checkout, confirmation, order history, and the same journey at 390px.
+- **Deterministic data.** Every test starts from a reset seed, so execution
+  order cannot change a result.
 - **Catalogue contract.** Eight products are asserted against a fixture that is
   written independently of the seed, so silent drift fails the suite.
 
 ## Architecture
 
 ```
-Playwright (API project)          Vitest
-        |                            |
-        v                            v
-Express 5 API  <---- pricing.ts (pure functions)
-        |
-        v
-   SQLite (seeded)  <--- reset endpoint, test-only
+Playwright UI (Chromium)          Playwright API
+        |                              |
+        v                              v
+React storefront  --- /api --->  Express 5 API
+   (Vite proxy)                        |
+                                       v
+                               SQLite (seeded)
+                                       ^
+                                       |
+                             pricing.ts (pure functions)
+                                       ^
+                                       |
+                                    Vitest
 ```
 
-| Layer       | Choice          | Reason                                                           |
-| ----------- | --------------- | ---------------------------------------------------------------- |
-| Test runner | Playwright      | API and (later) browser tests in one runner, HTML report, traces |
-| Unit runner | Vitest          | Fast boundary tests on pricing, no I/O                           |
-| API         | Express 5 + zod | Small surface, explicit validation                               |
-| Database    | SQLite          | Zero setup, deterministic, fast CI. Tradeoff in Limitations      |
-| CI          | GitHub Actions  | Typecheck, unit, API on every push and pull request              |
+| Layer       | Choice          | Reason                                        |
+| ----------- | --------------- | --------------------------------------------- |
+| Test runner | Playwright      | API and browser tests, HTML report, traces    |
+| Unit runner | Vitest          | Fast boundary tests on pricing, no I/O        |
+| Storefront  | React 19 + Vite | Small surface, same origin via the dev proxy  |
+| API         | Express 5 + zod | Explicit validation, one error envelope       |
+| Database    | SQLite          | Zero setup, deterministic, fast CI            |
+| CI          | GitHub Actions  | Typecheck, unit, API and UI on pushes and PRs |
 
 ## Quick start
 
-Requires Node 22.5 or newer.
+Requires Node 22.5 or newer and a Chromium download for Playwright.
 
 ```bash
 npm ci
-cp .env.example .env      # optional for local dev
+npx playwright install chromium
 npm run seed              # optional: the API seeds an empty database on boot
 npm run dev:api           # http://127.0.0.1:4000
 ```
@@ -75,24 +93,35 @@ npm run dev:api           # http://127.0.0.1:4000
 In a second shell:
 
 ```bash
-npm test                  # unit + API
-npm run report            # open the last HTML report
+npm run dev:web           # http://127.0.0.1:5173
 ```
 
-Tests are self-contained: Playwright starts the API on port **4100** with its
-own database (`.data/playwright.sqlite`), so a dev server on port 4000 is left
-alone.
+Run the suite from either shell:
+
+```bash
+npm test                  # unit + API
+npm run test:e2e          # UI, Chromium
+npm run test:all          # everything, one HTML report
+npm run report            # open the last report
+```
+
+Tests are self-contained: Playwright starts the API on **4100** and the
+storefront on **4173**, both with their own database (`.data/playwright.sqlite`),
+so a dev server on 4000/5173 is left alone.
 
 ## Commands
 
 | Command             | What it does                       |
 | ------------------- | ---------------------------------- |
 | `npm run dev:api`   | API with watch mode on port 4000   |
+| `npm run dev:web`   | Storefront with Vite on port 5173  |
 | `npm run seed`      | Reset the dev database to the seed |
 | `npm run test:unit` | Pricing rules with Vitest          |
 | `npm run test:api`  | API suite with Playwright          |
-| `npm test`          | Unit, then API                     |
-| `npm run typecheck` | TypeScript, no emit                |
+| `npm run test:e2e`  | UI suite with Chromium             |
+| `npm run test:all`  | API and UI in one run              |
+| `npm run build:web` | Typecheck and production build     |
+| `npm run typecheck` | TypeScript, both workspaces        |
 | `npm run lint`      | ESLint                             |
 | `npm run format`    | Prettier write                     |
 | `npm run report`    | Open the Playwright HTML report    |
@@ -100,7 +129,7 @@ alone.
 To measure flakiness rather than guess:
 
 ```bash
-npx playwright test --project=api --repeat-each=3
+npx playwright test --project=chromium --repeat-each=3
 ```
 
 ## Seeded data
@@ -114,7 +143,7 @@ Accounts, password `Passw0rd!`:
 
 Products are intentionally awkward: **Nightcap Beanie** is sold out, **Archive
 Jacket** has stock 2, **Ghost Shell** is inactive. Discount codes: `SAVE10`,
-`SAVE25`, and `EXPIRED10` (inactive).
+`SAVE25`, and `EXPIRED10` (inactive). The login page lists the demo accounts.
 
 ## Test design
 
@@ -122,40 +151,58 @@ Jacket** has stock 2, **Ghost Shell** is inactive. Discount codes: `SAVE10`,
   `WARD-DEF-nnn`.
 - `tests/fixtures/` holds expectations. It does not import the seed, so a seed
   change cannot silently redefine correctness.
-- `tests/support/fixtures.ts` resets the database before every test through an
-  auto fixture. Authorization tests get two independent clients.
+- `tests/support/fixtures.ts` and `tests/support/app-fixtures.ts` reset the
+  database before every test. Authorization tests get two independent clients.
+- Page objects live in `tests/support/pages/`. Selectors use roles, labels and
+  a small number of test ids, never CSS chains.
 - Assertions target the machine readable `error.code`, not prose.
 - `trace: retain-on-failure` rather than `on-first-retry`, because local runs
   have zero retries and the trace is exactly what a local failure needs.
-- The API suite runs with one worker. SQLite writes are serialized in one
-  process, and the reset endpoint is global. Parallel workers are a later
-  improvement with a database per worker.
+- One worker. SQLite writes are serialized in one process and the reset
+  endpoint is global. Per-worker databases are a later improvement.
+- The UI suite checks the mobile journey for horizontal overflow and checks
+  that checkout controls are keyboard reachable with a visible focus ring.
 
 Traceability: [docs/test-cases.md](docs/test-cases.md).
 Specification the tests defend: [docs/business-rules.md](docs/business-rules.md).
+UI direction: [DESIGN.md](DESIGN.md).
+
+## Verification beyond the suite
+
+A separate click-through audit checks what assertions alone miss and writes the
+evidence to [docs/evidence/clickthrough-2026-10-30.json](docs/evidence/clickthrough-2026-10-30.json):
+
+- console and page errors: 0
+- contrast failures on visible text: 0 (WCAG AA thresholds per element)
+- interactive targets under 44px: 0
+- horizontal overflow at 390px on shop, cart and checkout: 0
+- empty states for cart, orders and search: present
+- every flow clicked once: sign in, add, quantity update, checkout, sign out
 
 ## Known limitations
 
+- Chromium only. Firefox and WebKit are pending, and when added they will run
+  nightly rather than on every pull request.
 - SQLite serializes writes in one process. The oversell test proves the guarded
-  stock update, not distributed locking. Two API instances against one database
-  is the follow-up.
-- No tax, no payment provider, no carrier integration.
-- No rate limiting or account lockout.
-- API tests use a global reset and one worker. Per-worker databases are planned.
-- App, report and defect metrics are only published after a real run.
-- Fault injection endpoint exists only while `ALLOW_TEST_ROUTES=1`.
+  stock update, not distributed locking.
+- API and UI suites share one database and one worker.
+- No automated accessibility scan (axe-core) yet. Keyboard focus and contrast
+  are covered by the UI test and the audit above.
+- No tax, payment provider, carrier integration, rate limiting or lockout.
+- Fault injection and the defect lifecycle are planned, not built.
+- No deployed demo or published report yet.
 
 ## Roadmap
 
 - [x] Deterministic seed, schema, business rules
 - [x] Pricing unit suite
 - [x] API contract, auth, cart, checkout, stock, authorization, error leakage
+- [x] Storefront: login, catalogue, cart, checkout, confirmation, order history
+- [x] UI critical journeys, page objects, mobile and keyboard checks
 - [x] CI workflow with HTML report artifact
-- [ ] Storefront: login, catalogue, cart, checkout
-- [ ] UI critical journeys and page objects
-- [ ] Checkout accessibility with axe-core
+- [ ] Checkout accessibility scan with axe-core
 - [ ] Planted-defect lifecycle: introduce, detect, report, fix, regression
-- [ ] Chromium on PR, full browser matrix nightly
+- [ ] Firefox and WebKit nightly matrix
 - [ ] Deployed demo and published HTML report
 - [ ] Flake rate published from a repeat run
 - [ ] One deep failure investigation write-up with a trace
@@ -163,26 +210,29 @@ Specification the tests defend: [docs/business-rules.md](docs/business-rules.md)
 ## Repository layout
 
 ```
-apps/api/            Express API, schema, seed, pricing, routes
+apps/api/              Express API, schema, seed, pricing, routes
+apps/storefront/       React and Vite storefront
 tests/
-  api/               Playwright API specs
-  unit/              Vitest pricing specs
-  fixtures/          Expectations and test data
-  support/           API client, fixtures, types
-docs/                Test plan, strategy, cases, business rules, templates
-playwright.config.ts API project, webServer, report and trace policy
+  api/                 Playwright API specs
+  e2e/                 Playwright UI journeys
+  unit/                Vitest pricing specs
+  fixtures/            Expectations and test data
+  support/             API client, fixtures, types, page objects
+docs/                  Plan, strategy, cases, rules, evidence, templates
+screenshots/           Real captures from the click-through audit
 ```
 
 ## Documentation
 
-| File                                                               | Purpose                                       |
-| ------------------------------------------------------------------ | --------------------------------------------- |
-| [docs/test-plan.md](docs/test-plan.md)                             | Scope, environments, risks, exit criteria     |
-| [docs/test-strategy.md](docs/test-strategy.md)                     | Layers, isolation, flake and browser policy   |
-| [docs/test-cases.md](docs/test-cases.md)                           | Traceability matrix, automated versus planned |
-| [docs/business-rules.md](docs/business-rules.md)                   | The specification under test                  |
-| [docs/defects/defect-template.md](docs/defects/defect-template.md) | Defect report format                          |
-| [docs/test-summary-template.md](docs/test-summary-template.md)     | Run summary format                            |
+| File                                                               | Purpose                                          |
+| ------------------------------------------------------------------ | ------------------------------------------------ |
+| [docs/test-plan.md](docs/test-plan.md)                             | Scope, environments, risks, exit criteria        |
+| [docs/test-strategy.md](docs/test-strategy.md)                     | Layers, isolation, flake and browser policy      |
+| [docs/test-cases.md](docs/test-cases.md)                           | Traceability matrix, automated versus planned    |
+| [docs/business-rules.md](docs/business-rules.md)                   | The specification under test                     |
+| [docs/defects/defect-template.md](docs/defects/defect-template.md) | Defect report format                             |
+| [docs/test-summary-template.md](docs/test-summary-template.md)     | Run summary format                               |
+| [DESIGN.md](DESIGN.md)                                             | Storefront direction and accessibility decisions |
 
 ## License
 

@@ -28,12 +28,40 @@ than an API test plus a unit test. The UI test is reserved for the journey.
 
 ## Isolation
 
-- `tests/support/fixtures.ts` exposes an auto fixture that resets the database
-  before every test.
+- `tests/support/fixtures.ts` and `tests/support/app-fixtures.ts` expose an auto
+  fixture that resets the database before every test. The UI project resets
+  through the Vite proxy, so it sees the same seed as the API project.
 - No test depends on execution order.
 - Two customers exist so authorization can be tested without creating
   accounts at runtime.
 - Sessions are created by logging in, never by inserting rows directly.
+
+## Page objects and selectors
+
+- Page objects live in `tests/support/pages/` and expose intent
+  (`addToCart('Aurora Hoodie')`), not selectors.
+- Locators use role, label and accessible name first. Test ids are limited to
+  product cards, cart lines, order rows and money outputs, where a role-based
+  locator would be ambiguous.
+- No CSS chains and no positional selectors, so a layout change does not break
+  the suite for the wrong reason.
+- `exact: true` is used wherever a short accessible name is a substring of
+  another control. That ambiguity caused seven false failures in the first UI
+  run and was fixed in the page objects, not by loosening assertions.
+
+## State and accessibility audit
+
+Assertions cover behaviour. A separate click-through audit covers what is easy
+to miss:
+
+- loading, empty and error states on catalogue, cart, orders and search
+- per-element contrast against the real background
+- interactive targets below 44px
+- horizontal overflow at 390px
+- console and page errors
+
+Evidence is committed under `docs/evidence/`. It supplements the suite: the
+audit runs manually before a release, the suite runs on every push.
 
 ## Negative and boundary testing
 
@@ -62,8 +90,9 @@ than an API test plus a unit test. The UI test is reserved for the journey.
 
 ## Browser policy
 
-- Pull requests run the API suite and, once the storefront lands, Chromium only.
-- The full Chromium, Firefox and WebKit matrix runs nightly and on `main`.
+- Pull requests run the API suite and the Chromium UI suite.
+- Firefox and WebKit are planned for a nightly and `main` matrix, not for every
+  pull request.
 - Rationale: three browsers on every pull request triples runtime and flake
   surface for little marginal signal on a small React app. The split is a
   decision, not a shortcut.

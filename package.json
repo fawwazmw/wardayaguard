@@ -12,14 +12,17 @@
   },
   "scripts": {
     "dev:api": "npm run dev -w @wardaya/api",
+    "dev:web": "npm run dev -w @wardaya/storefront",
     "start:api": "npm run start -w @wardaya/api",
+    "build:web": "npm run build -w @wardaya/storefront",
     "seed": "npm run seed -w @wardaya/api",
     "test": "npm run test:unit && npm run test:api",
     "test:unit": "vitest run",
     "test:api": "playwright test --project=api",
+    "test:e2e": "playwright test --project=chromium",
     "test:all": "playwright test",
     "report": "playwright show-report",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && npm run typecheck -w @wardaya/storefront",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

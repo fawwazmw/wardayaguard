@@ -11,9 +11,9 @@ concurrency:
 
 jobs:
   test:
-    name: Typecheck, unit and API
+    name: Typecheck, unit, API and UI
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -32,16 +32,24 @@ jobs:
       - name: Unit tests
         run: npm run test:unit
 
-      # The API project does not launch a browser, so no playwright install
-      # step is needed yet. It is added with the UI suite.
-      - name: API tests
-        run: npm run test:api
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build storefront
+        run: npm run build:web
+
+      # One run for both projects so the HTML report contains API and UI
+      # results together. Two separate runs would overwrite the report.
+      - name: API and UI tests
+        run: npm run test:all
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: playwright-report/
+          path: |
+            playwright-report/
+            test-results/
           retention-days: 7
           if-no-files-found: ignore
