@@ -50,6 +50,7 @@ IDs are area prefixed because the area already namespaces them. Defects use
 | CART-004 | Invalid quantities are rejected                                 | P1       | API   | Automated | `tests/api/cart.api.spec.ts` |
 | CART-005 | Quantity above stock is rejected                                | P1       | API   | Automated | `tests/api/cart.api.spec.ts` |
 | CART-005 | Rejected quantity shows the error and restores the line         | P1       | UI    | Automated | `tests/e2e/cart.spec.ts`     |
+| CART-006 | A merged add cannot push the line above stock                   | P1       | API   | Automated | `tests/api/cart.api.spec.ts` |
 
 ## D. Checkout and orders
 
