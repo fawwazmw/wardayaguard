@@ -90,9 +90,11 @@ audit runs manually before a release, the suite runs on every push.
 
 ## Browser policy
 
-- Pull requests run the API suite and the Chromium UI suite.
-- Firefox and WebKit are planned for a nightly and `main` matrix, not for every
-  pull request.
+- Pull requests run the API suite and the Chromium UI suite (`npm run test:ci`).
+- Firefox and WebKit run nightly and on manual dispatch through
+  `.github/workflows/nightly.yml`. Each browser job uploads its own report.
+- `npm run test:all` runs the API project and all three browser projects
+  locally.
 - Rationale: three browsers on every pull request triples runtime and flake
   surface for little marginal signal on a small React app. The split is a
   decision, not a shortcut.

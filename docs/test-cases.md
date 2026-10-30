@@ -100,8 +100,13 @@ IDs are area prefixed because the area already namespaces them. Defects use
 | REG-011 | Expired discount code is reported and creates no order        | P1       | API   | Automated | `tests/api/orders.api.spec.ts` |
 | REG-011 | Expired discount code is reported and creates no order        | P1       | UI    | Automated | `tests/e2e/checkout.spec.ts`   |
 
+## Browser matrix
+
+All UI cases run on Chromium on every pull request, and on Chromium, Firefox and
+WebKit in the nightly workflow. The browser is a Playwright project, not a
+separate test ID, so a browser-specific failure appears against the same case.
+
 ## Not yet automated
 
 - REG-003, dependency failure during checkout. Needs a fault switch on the
   storefront or a proxy that can fail a request.
-- Firefox and WebKit variants of REG-001, REG-004 and REG-005.

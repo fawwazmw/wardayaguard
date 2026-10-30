@@ -40,8 +40,9 @@ jobs:
 
       # One run for both projects so the HTML report contains API and UI
       # results together. Two separate runs would overwrite the report.
-      - name: API and UI tests
-        run: npm run test:all
+      # Firefox and WebKit run in the nightly matrix, not on every PR.
+      - name: API and Chromium tests
+        run: npm run test:ci
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}

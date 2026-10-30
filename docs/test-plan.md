@@ -33,7 +33,8 @@ controllable, not as the portfolio deliverable.
 - Error envelope and information leakage.
 - Storefront critical journeys: login, catalogue, cart, checkout, confirmation,
   order history, mobile width, keyboard focus.
-- Cross-browser execution of critical journeys (pending).
+- Cross-browser execution of the full UI suite on Chromium, Firefox and WebKit
+  (nightly and manual dispatch).
 
 ### Out of scope
 
@@ -46,11 +47,12 @@ controllable, not as the portfolio deliverable.
 
 ## 4. Environments
 
-| Environment | Database                  | Port | Notes                                           |
-| ----------- | ------------------------- | ---- | ----------------------------------------------- |
-| Local dev   | `.data/wardaya.sqlite`    | 4000 | `npm run dev:api`                               |
-| Playwright  | `.data/playwright.sqlite` | 4100 | Started by `webServer`, reset before every test |
-| CI          | `.data/playwright.sqlite` | 4100 | Same seed, Node 24 on Ubuntu                    |
+| Environment | Database                  | Port        | Notes                                             |
+| ----------- | ------------------------- | ----------- | ------------------------------------------------- |
+| Local dev   | `.data/wardaya.sqlite`    | 4000 / 5173 | `npm run dev:api` plus `npm run dev:web`          |
+| Playwright  | `.data/playwright.sqlite` | 4100 / 4173 | Started by `webServer`, reset before every test   |
+| CI          | `.data/playwright.sqlite` | 4100 / 4173 | Chromium plus API, Node 24 on Ubuntu              |
+| Nightly     | `.data/playwright.sqlite` | 4100 / 4173 | Chromium, Firefox and WebKit, one job per browser |
 
 Tests never point at the dev database. The test-only reset endpoint is mounted
 only when `ALLOW_TEST_ROUTES=1`.

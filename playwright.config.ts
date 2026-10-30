@@ -31,6 +31,16 @@ export default defineConfig({
       testDir: './tests/e2e',
       use: { ...devices['Desktop Chrome'], baseURL: WEB_BASE_URL },
     },
+    {
+      name: 'firefox',
+      testDir: './tests/e2e',
+      use: { ...devices['Desktop Firefox'], baseURL: WEB_BASE_URL },
+    },
+    {
+      name: 'webkit',
+      testDir: './tests/e2e',
+      use: { ...devices['Desktop Safari'], baseURL: WEB_BASE_URL },
+    },
   ],
   webServer: [
     {

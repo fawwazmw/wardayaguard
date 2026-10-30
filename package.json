@@ -20,6 +20,7 @@
     "test:unit": "vitest run",
     "test:api": "playwright test --project=api",
     "test:e2e": "playwright test --project=chromium",
+    "test:ci": "playwright test --project=api --project=chromium",
     "test:all": "playwright test",
     "report": "playwright show-report",
     "typecheck": "tsc --noEmit && npm run typecheck -w @wardaya/storefront",

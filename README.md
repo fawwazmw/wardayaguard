@@ -25,6 +25,10 @@ its pricing, inventory, checkout, authorization and customer-journey rules hold.
 Latest run: Node 24.18.0, macOS, Chromium 156, seed reset before every test.
 Playwright: 75 tests. Vitest: 13 tests. Typecheck, ESLint and Prettier are clean.
 
+CI runs the API suite and the Chromium UI suite on every push and pull request.
+The nightly matrix runs the same 23 UI cases on Chromium, Firefox and WebKit,
+one job per browser.
+
 ## Screenshots
 
 ![Catalogue at desktop width](screenshots/shop-desktop.png)
@@ -104,7 +108,8 @@ Run the suite from either shell:
 ```bash
 npm test                  # unit + API
 npm run test:e2e          # UI, Chromium
-npm run test:all          # everything, one HTML report
+npm run test:ci           # API + Chromium, what CI runs
+npm run test:all          # API + Chromium + Firefox + WebKit
 npm run report            # open the last report
 ```
 
@@ -122,7 +127,8 @@ so a dev server on 4000/5173 is left alone.
 | `npm run test:unit` | Pricing rules with Vitest          |
 | `npm run test:api`  | API suite with Playwright          |
 | `npm run test:e2e`  | UI suite with Chromium             |
-| `npm run test:all`  | API and UI in one run              |
+| `npm run test:ci`   | API and Chromium, what CI runs     |
+| `npm run test:all`  | API and all three browser projects |
 | `npm run build:web` | Typecheck and production build     |
 | `npm run typecheck` | TypeScript, both workspaces        |
 | `npm run lint`      | ESLint                             |
@@ -199,6 +205,11 @@ artifact and deploys it to GitHub Pages. The public report is
 https://fawwazmw.github.io/wardayaguard/. Deployment uses its own concurrency
 group so a newer commit cannot cancel a deploy mid-flight.
 
+A `Nightly browsers` workflow runs the UI suite on Chromium, Firefox and WebKit
+at 18:10 UTC, one job per browser, and can be triggered manually with
+`gh workflow run nightly.yml`. Each job uploads its own report, so a
+browser-specific failure is isolated instead of hidden behind a shared run.
+
 A third job builds the production Docker image and smoke-tests it: start the
 container, wait for `/api/health`, fetch `/`, then remove it. That keeps the
 deployment artifact honest.
@@ -226,8 +237,8 @@ caught it without new coverage. Full log and reasoning:
 
 ## Known limitations
 
-- Chromium only. Firefox and WebKit are pending, and when added they will run
-  nightly rather than on every pull request.
+- Firefox and WebKit run nightly rather than on every pull request. The
+  published Pages report is the Chromium run.
 - SQLite serializes writes in one process. The oversell test proves the guarded
   stock update, not distributed locking.
 - API and UI suites share one database and one worker.
@@ -249,8 +260,8 @@ caught it without new coverage. Full log and reasoning:
 - [x] Defect lifecycle: introduce, detect, report, fix, regression
 - [x] HTML report published to GitHub Pages
 - [x] Dockerfile and Render blueprint for a single-service demo
+- [x] Chromium, Firefox and WebKit nightly matrix
 - [ ] Checkout accessibility scan with axe-core
-- [ ] Firefox and WebKit nightly matrix
 - [ ] Hosted demo from the Render blueprint
 - [ ] Flake rate published from a repeat run
 - [ ] One deep failure investigation write-up with a trace
