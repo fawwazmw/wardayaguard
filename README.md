@@ -207,6 +207,10 @@ Accessibility is also asserted in the suite itself: axe-core reports 0 WCAG A/AA
 violations across seven page states (catalogue, empty search, login, cart,
 checkout, confirmation, order history) on every browser.
 
+Redesign verification (2026-10-31):
+[docs/evidence/redesign-2026-10-31.md](docs/evidence/redesign-2026-10-31.md)
+covers all three engines, a 243/243 flake re-run, and the deployed build.
+
 ## Continuous integration
 
 `.github/workflows/ci.yml` runs on every push to `main` and every pull request:

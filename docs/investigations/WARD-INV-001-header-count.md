@@ -17,6 +17,9 @@ The header badge shows `1`.
 
 ![Failing cart page with badge 1 and quantity 3](../evidence/WARD-DEF-004-header-count.png)
 
+The screenshot was captured before the v1.2.0 editorial redesign. The defect,
+the values and the conclusion are unchanged; only the visual layer is older.
+
 ## Reproduction
 
 ```bash

@@ -16,7 +16,7 @@ trust what it claims. Each item below is verified, not asserted.
 | 9   | Critical journeys work across browsers                    | PASS   | Nightly matrix on Chromium, Firefox and WebKit                                                                                                       |
 | 10  | Accessibility is measured                                 | PASS   | axe-core, WCAG A/AA, zero violations on seven page states                                                                                            |
 | 11  | A deployment artifact is live                             | PASS   | [Demo](https://wardayaguard.onrender.com): health 200, 8 products, login, test routes 404; Docker smoke test in CI                                   |
-| 12  | Repository hygiene                                        | PASS   | No tracked secrets or databases; 21/21 links return 200                                                                                              |
+| 12  | Repository hygiene                                        | PASS   | No tracked secrets or databases; 22/22 links return 200                                                                                              |
 
 ## Reproduce the checklist
 
